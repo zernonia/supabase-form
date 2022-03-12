@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue"
-import { Column, TableState, Table } from "@/interface"
+import { Column, Config, TableState, Table } from "@/interface"
+import { referenceFormat, referencePlaceholder } from "@/utils"
 //@ts-ignore
 import { Container, Draggable } from "vue-dndrop"
 
@@ -11,7 +12,7 @@ const supabaseInfo = ref({
 
 const tables = ref<TableState>()
 const selectedTable = ref<Table>()
-const columns = ref<Column[]>([])
+const config = ref<Config[]>([])
 const fetchData = () => {
   fetch(`${supabaseInfo.value.url}/rest/v1/?apikey=${supabaseInfo.value.anon}`)
     .then((res) => res.json())
@@ -36,12 +37,13 @@ const fetchData = () => {
           const colVal = value.properties[colKey]
           let col: Column = {
             title: colKey,
-            format: colVal.format.split(" ")[0],
+            format: colVal.enum ? "enum" : colVal.format.split(" ")[0],
             type: colVal.type,
             default: colVal.default ? colVal.default : undefined,
             required: value.required && value.required?.includes(colKey) ? true : false,
             pk: colVal.description && colVal.description?.includes("<pk/>") ? true : false,
             fk: colVal.description ? colVal.description.split("`")[1] : undefined,
+            enum: colVal.enum,
           }
           colGroup.push(col)
         })
@@ -60,15 +62,22 @@ const fetchData = () => {
 const selectTable = (table: Table) => {
   if (!table.columns) return
   selectedTable.value = table
-  columns.value = table.columns
+  config.value = table.columns.map((i) => {
+    return {
+      ...i,
+      enabled: !i.default?.length,
+      inputType: referenceFormat[i.format],
+      placeholder: referencePlaceholder[i.format],
+    }
+  })
 }
 
 const onDrop = (dropResult: any) => {
-  if (!columns.value) return
-  columns.value = applyDrag(columns.value, dropResult)
+  if (!config.value) return
+  config.value = applyDrag(config.value, dropResult)
 }
 
-const applyDrag = (arr: Column[], dragResult: any) => {
+const applyDrag = (arr: Config[], dragResult: any) => {
   const { removedIndex, addedIndex, payload } = dragResult
   if (removedIndex === null && addedIndex === null) return arr
 
@@ -112,9 +121,22 @@ const applyDrag = (arr: Column[], dragResult: any) => {
     <hr />
 
     <div class="flex">
-      <Container @drop="onDrop">
-        <Draggable v-for="(column, i) in columns" :key="column.title + i">
-          <div class="py-2">{{ column }}</div>
+      <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
+        <Draggable v-for="(item, i) in config" :key="item.title + i">
+          <div class="py-2 bg-white">
+            <span class="column-drag-handle cursor-move" style="float: left; padding: 0 10px">&#x2630;</span>
+            <div class="flex flex-col">
+              {{ item }}
+              <div class="flex items-center space-x-2">
+                <input type="checkbox" v-model="item.enabled" />
+                <input type="text" v-model="item.title" />
+              </div>
+              <input v-if="item.inputType != 'select'" :type="item.inputType" v-model="item.placeholder" />
+              <select v-else>
+                <option v-for="opt in item.enum" :value="opt">{{ opt }}</option>
+              </select>
+            </div>
+          </div>
         </Draggable>
       </Container>
     </div>

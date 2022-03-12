@@ -6,6 +6,7 @@ export interface Column {
   required: boolean
   pk: boolean
   fk?: string | undefined
+  enum?: string[]
 }
 
 export interface Table {
@@ -15,4 +16,10 @@ export interface Table {
 
 export interface TableState {
   [key: string]: Table
+}
+
+export interface Config extends Column {
+  enabled: boolean
+  inputType: string
+  placeholder: string | boolean | number | Date | undefined
 }
