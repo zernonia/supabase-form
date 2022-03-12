@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import { Column, TableState, Table } from "@/interface"
+//@ts-ignore
+import { Container, Draggable } from "vue-dndrop"
 
 const supabaseInfo = ref({
   url: import.meta.env.VITE_SUPABASE_URL,
@@ -9,6 +11,7 @@ const supabaseInfo = ref({
 
 const tables = ref<TableState>()
 const selectedTable = ref<Table>()
+const columns = ref<Column[]>([])
 const fetchData = () => {
   fetch(`${supabaseInfo.value.url}/rest/v1/?apikey=${supabaseInfo.value.anon}`)
     .then((res) => res.json())
@@ -53,6 +56,35 @@ const fetchData = () => {
       tables.value = tableGroup
     })
 }
+
+const selectTable = (table: Table) => {
+  if (!table.columns) return
+  selectedTable.value = table
+  columns.value = table.columns
+}
+
+const onDrop = (dropResult: any) => {
+  if (!columns.value) return
+  columns.value = applyDrag(columns.value, dropResult)
+}
+
+const applyDrag = (arr: Column[], dragResult: any) => {
+  const { removedIndex, addedIndex, payload } = dragResult
+  if (removedIndex === null && addedIndex === null) return arr
+
+  const result = [...arr]
+  let itemToAdd = payload
+
+  if (removedIndex !== null) {
+    itemToAdd = result.splice(removedIndex, 1)[0]
+  }
+
+  if (addedIndex !== null) {
+    result.splice(addedIndex, 0, itemToAdd)
+  }
+
+  return result
+}
 </script>
 
 <template>
@@ -71,7 +103,7 @@ const fetchData = () => {
 
     <ul class="flex items-start space-x-6">
       <li v-for="table in tables">
-        <button @click="selectedTable = table">
+        <button @click="selectTable(table)">
           {{ table.title }}
         </button>
       </li>
@@ -79,6 +111,12 @@ const fetchData = () => {
 
     <hr />
 
-    {{ selectedTable?.columns }}
+    <div class="flex">
+      <Container @drop="onDrop">
+        <Draggable v-for="(column, i) in columns" :key="column.title + i">
+          <div class="py-2">{{ column }}</div>
+        </Draggable>
+      </Container>
+    </div>
   </div>
 </template>
