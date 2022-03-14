@@ -67,7 +67,7 @@ const selectTable = (table: Table) => {
       reference: i,
       enabled: !i.default?.length,
       required: i.required,
-      title: i.title,
+      title: formatTitle(i.title),
       inputType: referenceFormat[i.format],
       placeholder: referencePlaceholder[i.format],
     }
@@ -95,6 +95,15 @@ const applyDrag = (arr: Config[], dragResult: any) => {
   }
 
   return result
+}
+
+const formatTitle = (str: string) => {
+  var i,
+    frags = str.split("_")
+  for (i = 0; i < frags.length; i++) {
+    frags[i] = frags[i].charAt(0).toUpperCase() + frags[i].slice(1)
+  }
+  return frags.join(" ")
 }
 </script>
 
