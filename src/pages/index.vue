@@ -135,7 +135,7 @@ const formatTitle = (str: string) => {
 
     <div class="flex">
       <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
-        <Draggable v-for="(item, i) in config" :key="item.title + i">
+        <Draggable v-for="(item, i) in config" :key="item.reference.title + i">
           <div class="config p-4 w-96 mb-2 rounded-lg border bg-gray-100">
             <div class="flex items-center justify-between">
               <span class="column-drag-handle cursor-move">&#x2630;</span>
@@ -150,25 +150,32 @@ const formatTitle = (str: string) => {
                 </div>
               </div>
             </div>
-            <div class="py-2 flex flex-col">
+            <div class="py-2 relative flex flex-col" :disabled="!item.enabled">
+              <div class="absolute w-full h-full bg-gray-100 opacity-50" v-if="!item.enabled"></div>
               <input
                 type="text"
                 class="my-2 text-xl font-semibold outline-none transition border-b-2 border-transparent focus:border-green-400"
                 v-model="item.title"
+                placeholder="Heading"
+                autocomplete="off"
+                :tabindex="item.enabled ? 0 : -1"
               />
               <input
                 type="text"
-                class="mb-4 outline-none transition border-b-2 border-transparent focus:border-green-400"
+                class="mb-4 text-gray-400 outline-none transition border-b-2 border-transparent focus:border-green-400"
                 v-model="item.description"
                 placeholder="Write some description (optional)"
+                autocomplete="off"
+                :tabindex="item.enabled ? 0 : -1"
               />
               <input
                 class="input"
                 v-if="item.inputType != 'select'"
                 :type="item.inputType"
                 v-model="item.placeholder"
+                :tabindex="item.enabled ? 0 : -1"
               />
-              <select class="input" v-model="item.placeholder" v-else>
+              <select v-else class="input" v-model="item.placeholder" :tabindex="item.enabled ? 0 : -1">
                 <option disabled value="undefined">Please select one</option>
                 <option v-for="opt in item.reference.enum" :value="opt">{{ opt }}</option>
               </select>
