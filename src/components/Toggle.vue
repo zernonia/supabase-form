@@ -14,7 +14,7 @@ const onChange = (ev: Event) => {
 <template>
   <div class="flex items-center justify-center w-full">
     <label class="relative cursor-pointer">
-      <input class="absolute opacity-0" type="checkbox" :value="modelValue" @change="onChange" />
+      <input class="absolute opacity-0" type="checkbox" v-model="modelValue" @change="onChange" />
 
       <div class="toggle-bg block bg-warm-gray-100 w-10 h-6 rounded-full transition"></div>
 

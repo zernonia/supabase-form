@@ -109,13 +109,15 @@ const formatTitle = (str: string) => {
 
 <template>
   <div class="flex flex-col">
-    <label for="">url</label>
-    <input type="url" name="" id="" v-model="supabaseInfo.url" />
+    <div class="max-w-72 p-4 border rounded-xl">
+      <label class="label" for="supabase-url">url</label>
+      <input class="input" name="supabase-url" type="url" v-model="supabaseInfo.url" />
 
-    <label for="">anon</label>
-    <input type="text" name="" id="" v-model="supabaseInfo.anon" />
+      <label class="label" for="supabase-key">anon</label>
+      <input class="input" name="supabase-key" type="text" v-model="supabaseInfo.anon" />
 
-    <button @click="fetchData">Fetch</button>
+      <button class="button" @click="fetchData">Fetch</button>
+    </div>
 
     <br />
     <hr />
@@ -138,20 +140,21 @@ const formatTitle = (str: string) => {
             <span class="column-drag-handle cursor-move" style="float: left; padding: 0 10px">&#x2630;</span>
             <div class="flex flex-col">
               <!-- {{ item }} -->
-              <div class="flex items-center space-x-2">
+              <div class="flex items-center space-x-4">
                 <input type="text" v-model="item.title" />
-                <div>
+                <div class="flex items-center space-x-2">
                   <label for="">Enabled:</label>
                   <Toggle v-model="item.enabled"></Toggle>
                 </div>
-                <div>
+                <div class="flex items-center space-x-2">
                   <label for="">Required:</label>
                   <Toggle v-model="item.required"></Toggle>
                 </div>
               </div>
+              <input type="text" v-model="item.description" placeholder="Write some description" />
               <input v-if="item.inputType != 'select'" :type="item.inputType" v-model="item.placeholder" />
-              <select v-else>
-                <option disabled value="">Please select one</option>
+              <select v-model="item.placeholder" v-else>
+                <option disabled value="undefined">Please select one</option>
                 <option v-for="opt in item.reference.enum" :value="opt">{{ opt }}</option>
               </select>
             </div>
