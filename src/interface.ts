@@ -18,8 +18,12 @@ export interface TableState {
   [key: string]: Table
 }
 
-export interface Config extends Column {
+export interface Config {
   enabled: boolean
+  required: boolean
+  title: string
+  description?: string
   inputType: string
   placeholder: string | boolean | number | Date | undefined
+  reference: Column
 }

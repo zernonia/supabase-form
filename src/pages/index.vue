@@ -64,8 +64,10 @@ const selectTable = (table: Table) => {
   selectedTable.value = table
   config.value = table.columns.map((i) => {
     return {
-      ...i,
+      reference: i,
       enabled: !i.default?.length,
+      required: i.required,
+      title: i.title,
       inputType: referenceFormat[i.format],
       placeholder: referencePlaceholder[i.format],
     }
@@ -126,14 +128,22 @@ const applyDrag = (arr: Config[], dragResult: any) => {
           <div class="py-2 bg-white">
             <span class="column-drag-handle cursor-move" style="float: left; padding: 0 10px">&#x2630;</span>
             <div class="flex flex-col">
-              {{ item }}
+              <!-- {{ item }} -->
               <div class="flex items-center space-x-2">
-                <input type="checkbox" v-model="item.enabled" />
                 <input type="text" v-model="item.title" />
+                <div>
+                  <label for="">Enabled:</label>
+                  <Toggle v-model="item.enabled"></Toggle>
+                </div>
+                <div>
+                  <label for="">Required:</label>
+                  <Toggle v-model="item.required"></Toggle>
+                </div>
               </div>
               <input v-if="item.inputType != 'select'" :type="item.inputType" v-model="item.placeholder" />
               <select v-else>
-                <option v-for="opt in item.enum" :value="opt">{{ opt }}</option>
+                <option disabled value="">Please select one</option>
+                <option v-for="opt in item.reference.enum" :value="opt">{{ opt }}</option>
               </select>
             </div>
           </div>
