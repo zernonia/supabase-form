@@ -136,24 +136,39 @@ const formatTitle = (str: string) => {
     <div class="flex">
       <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
         <Draggable v-for="(item, i) in config" :key="item.title + i">
-          <div class="py-2 bg-white">
-            <span class="column-drag-handle cursor-move" style="float: left; padding: 0 10px">&#x2630;</span>
-            <div class="flex flex-col">
-              <!-- {{ item }} -->
+          <div class="config p-4 w-96 mb-2 rounded-lg border bg-gray-100">
+            <div class="flex items-center justify-between">
+              <span class="column-drag-handle cursor-move">&#x2630;</span>
               <div class="flex items-center space-x-4">
-                <input type="text" v-model="item.title" />
                 <div class="flex items-center space-x-2">
-                  <label for="">Enabled:</label>
+                  <label class="text-xs text-gray-4 00" for="">Enabled:</label>
                   <Toggle v-model="item.enabled"></Toggle>
                 </div>
                 <div class="flex items-center space-x-2">
-                  <label for="">Required:</label>
+                  <label class="text-xs text-gray-4 00" for="">Required:</label>
                   <Toggle v-model="item.required"></Toggle>
                 </div>
               </div>
-              <input type="text" v-model="item.description" placeholder="Write some description" />
-              <input v-if="item.inputType != 'select'" :type="item.inputType" v-model="item.placeholder" />
-              <select v-model="item.placeholder" v-else>
+            </div>
+            <div class="py-2 flex flex-col">
+              <input
+                type="text"
+                class="my-2 text-xl font-semibold outline-none transition border-b-2 border-transparent focus:border-green-400"
+                v-model="item.title"
+              />
+              <input
+                type="text"
+                class="mb-4 outline-none transition border-b-2 border-transparent focus:border-green-400"
+                v-model="item.description"
+                placeholder="Write some description (optional)"
+              />
+              <input
+                class="input"
+                v-if="item.inputType != 'select'"
+                :type="item.inputType"
+                v-model="item.placeholder"
+              />
+              <select class="input" v-model="item.placeholder" v-else>
                 <option disabled value="undefined">Please select one</option>
                 <option v-for="opt in item.reference.enum" :value="opt">{{ opt }}</option>
               </select>
@@ -164,3 +179,9 @@ const formatTitle = (str: string) => {
     </div>
   </div>
 </template>
+
+<style lang="postcss">
+.config {
+  @apply text-sm;
+}
+</style>

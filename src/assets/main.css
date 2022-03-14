@@ -9,13 +9,15 @@ html {
   font-family: custom-font, BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans,
     Droid Sans, Helvetica Neue, Helvetica, Arial, sans-serif;
 }
-
+input {
+  @apply bg-transparent;
+}
 .label {
   @apply block mb-1 text-sm font-medium text-gray-900 dark:text-gray-300;
 }
 .input {
-  @apply mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500;
+  @apply mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500;
 }
 .button {
-  @apply text-white bg-green-400 hover:bg-green-500 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-400 dark:focus:ring-green-500;
+  @apply text-white bg-green-400 outline-none hover:bg-green-500 focus:ring-2 focus:ring-green-500 font-medium rounded-lg text-sm px-5 py-2 text-center mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-400 dark:focus:ring-green-500;
 }

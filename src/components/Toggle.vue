@@ -16,7 +16,9 @@ const onChange = (ev: Event) => {
     <label class="relative cursor-pointer">
       <input class="absolute opacity-0" type="checkbox" v-model="modelValue" @change="onChange" />
 
-      <div class="toggle-bg block bg-warm-gray-100 w-10 h-6 rounded-full transition"></div>
+      <div
+        class="toggle-bg block bg-gray-200 w-10 h-6 rounded-full transition ring-2 ring-transparent focus:ring-green-500"
+      ></div>
 
       <div class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 shadow rounded-full transition"></div>
     </label>
@@ -29,5 +31,8 @@ input:checked ~ .toggle-bg {
 }
 input:checked ~ .toggle-dot {
   @apply transform translate-x-full;
+}
+input:focus ~ .toggle-bg {
+  @apply ring-green-500;
 }
 </style>
