@@ -153,7 +153,7 @@ const formatTitle = (str: string) => {
         <Draggable
           v-for="(item, i) in availableColumn"
           :key="item.title + i"
-          class="p-2.5 rounded-lg border bg-white mb-2 text-sm"
+          class="p-2.5 rounded-lg border bg-white text-sm cursor-move"
         >
           {{ formatTitle(item.title) }}
         </Draggable>
@@ -168,20 +168,15 @@ const formatTitle = (str: string) => {
           class="w-full max-w-screen-sm min-h-72"
         >
           <Draggable v-for="(item, i) in config" :key="item.reference.title + i">
-            <div class="config p-4 w-full mb-2 rounded-lg border bg-gray-50">
-              <div class="flex items-center justify-between">
-                <span class="column-drag-handle cursor-move">&#x2630;</span>
-                <div class="flex items-center space-x-4">
-                  <div class="flex items-center space-x-2">
-                    <label class="text-xs text-gray-4 00" for="">Required:</label>
-                    <Toggle v-model="item.required"></Toggle>
-                  </div>
-                </div>
-              </div>
-              <div class="py-2 relative flex flex-col">
+            <div class="relative config p-4 w-full rounded-lg border bg-gray-50">
+              <span
+                class="column-drag-handle absolute cursor-move top-0 left-1/2 transform -translate-x-1/2 text-gray-400"
+                ><i-ph-dots-six-bold></i-ph-dots-six-bold
+              ></span>
+              <div class="relative flex flex-col">
                 <input
                   type="text"
-                  class="my-2 text-2xl font-semibold outline-none transition border-b-2 border-transparent focus:border-green-400"
+                  class="mb-1 text-2xl font-semibold outline-none transition border-b-2 border-transparent focus:border-green-400"
                   v-model="item.title"
                   placeholder="Heading"
                   autocomplete="off"
@@ -203,6 +198,13 @@ const formatTitle = (str: string) => {
                   <option v-for="opt in item.reference.enum" :value="opt">{{ opt }}</option>
                 </select>
               </div>
+
+              <div class="mt-4">
+                <div class="w-min flex items-center space-x-2">
+                  <label class="text-xs text-gray-400" for="">Required:</label>
+                  <Toggle v-model="item.required"></Toggle>
+                </div>
+              </div>
             </div>
           </Draggable>
         </Container>
@@ -214,5 +216,8 @@ const formatTitle = (str: string) => {
 <style lang="postcss">
 .config {
   @apply text-sm;
+}
+.dndrop-draggable-wrapper {
+  @apply mb-2;
 }
 </style>
