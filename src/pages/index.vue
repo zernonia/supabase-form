@@ -60,11 +60,10 @@ const fetchData = () => {
     })
 }
 
-const selectTable = (table: Table) => {
-  if (!table.columns) return
-  selectedTable.value = table
-  config.value = table.columns.filter((i) => i.required).map((i) => addColumnToConfig(i))
-  availableColumn.value = table.columns.filter((i) => !i.required)
+const selectTable = () => {
+  if (!selectedTable.value?.columns) return
+  config.value = selectedTable.value.columns.filter((i) => i.required).map((i) => addColumnToConfig(i))
+  availableColumn.value = selectedTable.value.columns.filter((i) => !i.required)
 }
 
 const onDrop = (ref: "config" | "availableColumn", dropResult: any) => {
@@ -133,13 +132,12 @@ const formatTitle = (str: string) => {
     <hr />
     <br />
 
-    <ul class="flex items-start space-x-6">
-      <li v-for="table in tables">
-        <button @click="selectTable(table)">
-          {{ table.title }}
-        </button>
-      </li>
-    </ul>
+    <select class="input max-w-72" v-model="selectedTable" @change="selectTable">
+      <option disabled value="undefined">Please select one</option>
+      <option v-for="table in tables" :value="table">
+        {{ table.title }}
+      </option>
+    </select>
 
     <hr />
 
@@ -148,7 +146,7 @@ const formatTitle = (str: string) => {
         group-name="1"
         @drop="onDrop('availableColumn', $event)"
         :get-child-payload="(i: number) => availableColumn[i]"
-        class="border rounded-xl bg-gray-50 w-72 h-max p-4 flex-shrink-0"
+        class="border rounded-xl bg-gray-50 w-full max-w-72 h-max p-4 flex-shrink-0"
       >
         <Draggable v-for="(item, i) in availableColumn" :key="item.title + i">
           <div class="p-2.5 rounded-lg border bg-white text-sm cursor-move">
@@ -181,7 +179,7 @@ const formatTitle = (str: string) => {
                 />
                 <Editable
                   v-model="item.description"
-                  class="mb-4 text-gray-400 outline-none transition border-b-2 border-transparent focus:border-green-400"
+                  class="mb-4 text-gray-400 outline-none"
                   data-placeholder="Write some description (optional)"
                   autocomplete="off"
                 ></Editable>
