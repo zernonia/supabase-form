@@ -69,7 +69,7 @@ const selectTable = (table: Table) => {
       required: i.required,
       title: formatTitle(i.title),
       inputType: referenceFormat[i.format],
-      placeholder: referencePlaceholder[i.format],
+      // placeholder: referencePlaceholder[i.format],
     }
   })
 }
@@ -109,7 +109,7 @@ const formatTitle = (str: string) => {
 
 <template>
   <div class="flex flex-col">
-    <div class="max-w-72 p-4 border rounded-xl">
+    <div class="max-w-72 p-4 bg-gray-50 border rounded-xl">
       <label class="label" for="supabase-url">url</label>
       <input class="input" name="supabase-url" type="url" v-model="supabaseInfo.url" />
 
@@ -133,10 +133,10 @@ const formatTitle = (str: string) => {
 
     <hr />
 
-    <div class="flex">
-      <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
+    <div class="w-full flex justify-center">
+      <Container @drop="onDrop" drag-handle-selector=".column-drag-handle" class="w-full max-w-screen-sm">
         <Draggable v-for="(item, i) in config" :key="item.reference.title + i">
-          <div class="config p-4 w-96 mb-2 rounded-lg border bg-gray-100">
+          <div class="config p-4 w-full mb-2 rounded-lg border bg-gray-50" :class="{ 'opacity-50': !item.enabled }">
             <div class="flex items-center justify-between">
               <span class="column-drag-handle cursor-move">&#x2630;</span>
               <div class="flex items-center space-x-4">
@@ -151,10 +151,10 @@ const formatTitle = (str: string) => {
               </div>
             </div>
             <div class="py-2 relative flex flex-col" :disabled="!item.enabled">
-              <div class="absolute w-full h-full bg-gray-100 opacity-50" v-if="!item.enabled"></div>
+              <div class="absolute w-full h-full bg-transparent" v-if="!item.enabled"></div>
               <input
                 type="text"
-                class="my-2 text-xl font-semibold outline-none transition border-b-2 border-transparent focus:border-green-400"
+                class="my-2 text-2xl font-semibold outline-none transition border-b-2 border-transparent focus:border-green-400"
                 v-model="item.title"
                 placeholder="Heading"
                 autocomplete="off"

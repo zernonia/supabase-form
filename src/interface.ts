@@ -24,6 +24,6 @@ export interface Config {
   title: string
   description?: string
   inputType: string
-  placeholder: string | boolean | number | Date | undefined
+  placeholder?: string | boolean | number | Date
   reference: Column
 }
