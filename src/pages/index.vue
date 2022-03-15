@@ -79,7 +79,7 @@ const onDrop = (ref: "config" | "availableColumn", dropResult: any) => {
 const addColumnToConfig = (col: Column) => {
   return {
     reference: col,
-    enabled: !col.default?.length,
+    // enabled: !col.default?.length,
     required: col.required,
     title: formatTitle(col.title),
     inputType: referenceFormat[col.format],
@@ -168,45 +168,37 @@ const formatTitle = (str: string) => {
           class="w-full max-w-screen-sm min-h-72"
         >
           <Draggable v-for="(item, i) in config" :key="item.reference.title + i">
-            <div class="config p-4 w-full mb-2 rounded-lg border bg-gray-50" :class="{ 'opacity-50': !item.enabled }">
+            <div class="config p-4 w-full mb-2 rounded-lg border bg-gray-50">
               <div class="flex items-center justify-between">
                 <span class="column-drag-handle cursor-move">&#x2630;</span>
                 <div class="flex items-center space-x-4">
-                  <div class="flex items-center space-x-2">
-                    <label class="text-xs text-gray-4 00" for="">Enabled:</label>
-                    <Toggle v-model="item.enabled"></Toggle>
-                  </div>
                   <div class="flex items-center space-x-2">
                     <label class="text-xs text-gray-4 00" for="">Required:</label>
                     <Toggle v-model="item.required"></Toggle>
                   </div>
                 </div>
               </div>
-              <div class="py-2 relative flex flex-col" :disabled="!item.enabled">
-                <div class="absolute w-full h-full bg-transparent" v-if="!item.enabled"></div>
+              <div class="py-2 relative flex flex-col">
                 <input
                   type="text"
                   class="my-2 text-2xl font-semibold outline-none transition border-b-2 border-transparent focus:border-green-400"
                   v-model="item.title"
                   placeholder="Heading"
                   autocomplete="off"
-                  :tabindex="item.enabled ? 0 : -1"
                 />
                 <Editable
                   v-model="item.description"
                   class="mb-4 text-gray-400 outline-none transition border-b-2 border-transparent focus:border-green-400"
                   data-placeholder="Write some description (optional)"
                   autocomplete="off"
-                  :tabindex="item.enabled ? 0 : -1"
                 ></Editable>
                 <input
                   class="input"
                   v-if="item.inputType != 'select'"
                   :type="item.inputType"
                   v-model="item.placeholder"
-                  :tabindex="item.enabled ? 0 : -1"
                 />
-                <select v-else class="input" v-model="item.placeholder" :tabindex="item.enabled ? 0 : -1">
+                <select v-else class="input" v-model="item.placeholder">
                   <option disabled value="undefined">Please select one</option>
                   <option v-for="opt in item.reference.enum" :value="opt">{{ opt }}</option>
                 </select>

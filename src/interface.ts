@@ -19,7 +19,7 @@ export interface TableState {
 }
 
 export interface Config {
-  enabled: boolean
+  // enabled: boolean
   required: boolean
   title: string
   description?: string
