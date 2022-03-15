@@ -98,7 +98,7 @@ const applyDrag = (ref: "config" | "availableColumn", arr: Config[] | Column[], 
     itemToAdd = result.splice(removedIndex, 1)[0]
   }
 
-  itemToAdd = ref == "config" ? addColumnToConfig(itemToAdd) : itemToAdd.reference
+  itemToAdd = ref == "config" ? addColumnToConfig(itemToAdd) : itemToAdd.reference ?? itemToAdd
 
   if (addedIndex !== null) {
     result.splice(addedIndex, 0, itemToAdd)
@@ -150,12 +150,10 @@ const formatTitle = (str: string) => {
         :get-child-payload="(i: number) => availableColumn[i]"
         class="border rounded-xl bg-gray-50 w-72 h-max p-4 flex-shrink-0"
       >
-        <Draggable
-          v-for="(item, i) in availableColumn"
-          :key="item.title + i"
-          class="p-2.5 rounded-lg border bg-white text-sm cursor-move"
-        >
-          {{ formatTitle(item.title) }}
+        <Draggable v-for="(item, i) in availableColumn" :key="item.title + i">
+          <div class="p-2.5 rounded-lg border bg-white text-sm cursor-move">
+            {{ formatTitle(item.title) }}
+          </div>
         </Draggable>
       </Container>
 
@@ -218,6 +216,6 @@ const formatTitle = (str: string) => {
   @apply text-sm;
 }
 .dndrop-draggable-wrapper {
-  @apply mb-2;
+  @apply pb-2;
 }
 </style>
