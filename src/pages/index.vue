@@ -4,6 +4,7 @@ import { Column, Config, TableState, Table } from "@/interface"
 import { referenceFormat, referencePlaceholder } from "@/utils"
 //@ts-ignore
 import { Container, Draggable } from "vue-dndrop"
+import Preview from "@/components/Preview.vue"
 
 const supabaseInfo = ref({
   url: import.meta.env.VITE_SUPABASE_URL,
@@ -14,6 +15,7 @@ const tables = ref<TableState>()
 const selectedTable = ref<Table>()
 const availableColumn = ref<Column[]>([])
 const config = ref<Config[]>([])
+const isPreviewing = ref(false)
 const fetchData = () => {
   fetch(`${supabaseInfo.value.url}/rest/v1/?apikey=${supabaseInfo.value.anon}`)
     .then((res) => res.json())
@@ -24,11 +26,7 @@ const fetchData = () => {
       let value: any
 
       const checkView = (title: string) => {
-        if (Object.keys(paths[`/${title}`]).length == 1) {
-          return true
-        } else {
-          return false
-        }
+        return Object.keys(paths[`/${title}`]).length == 1
       }
 
       for ([key, value] of Object.entries(definitions)) {
@@ -139,6 +137,8 @@ const formatTitle = (str: string) => {
       </option>
     </select>
 
+    <button class="button" @click="isPreviewing = true">Preview</button>
+
     <hr />
 
     <div class="flex mt-4">
@@ -172,14 +172,14 @@ const formatTitle = (str: string) => {
               <div class="relative flex flex-col">
                 <input
                   type="text"
-                  class="mb-1 text-2xl font-semibold outline-none transition border-b-2 border-transparent focus:border-green-400"
+                  class="h2 mb-1 outline-none transition border-b-2 border-transparent focus:border-green-400"
                   v-model="item.title"
                   placeholder="Heading"
                   autocomplete="off"
                 />
                 <Editable
                   v-model="item.description"
-                  class="mb-4 text-gray-400 outline-none"
+                  class="description mb-4 outline-none"
                   data-placeholder="Write some description (optional)"
                   autocomplete="off"
                 ></Editable>
@@ -206,6 +206,8 @@ const formatTitle = (str: string) => {
         </Container>
       </div>
     </div>
+
+    <Preview v-if="isPreviewing" :configs="config" @close="isPreviewing = false"></Preview>
   </div>
 </template>
 
