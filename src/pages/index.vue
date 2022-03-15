@@ -12,6 +12,7 @@ const supabaseInfo = ref({
 
 const tables = ref<TableState>()
 const selectedTable = ref<Table>()
+const availableColumn = ref<Column[]>([])
 const config = ref<Config[]>([])
 const fetchData = () => {
   fetch(`${supabaseInfo.value.url}/rest/v1/?apikey=${supabaseInfo.value.anon}`)
@@ -62,24 +63,31 @@ const fetchData = () => {
 const selectTable = (table: Table) => {
   if (!table.columns) return
   selectedTable.value = table
-  config.value = table.columns.map((i) => {
-    return {
-      reference: i,
-      enabled: !i.default?.length,
-      required: i.required,
-      title: formatTitle(i.title),
-      inputType: referenceFormat[i.format],
-      // placeholder: referencePlaceholder[i.format],
-    }
-  })
+  config.value = table.columns.filter((i) => i.required).map((i) => addColumnToConfig(i))
+  availableColumn.value = table.columns.filter((i) => !i.required)
 }
 
-const onDrop = (dropResult: any) => {
+const onDrop = (ref: "config" | "availableColumn", dropResult: any) => {
   if (!config.value) return
-  config.value = applyDrag(config.value, dropResult)
+  if (ref == "config") {
+    config.value = applyDrag("config", config.value, dropResult) as Config[]
+  } else if (ref == "availableColumn") {
+    availableColumn.value = applyDrag("availableColumn", availableColumn.value, dropResult) as Column[]
+  }
 }
 
-const applyDrag = (arr: Config[], dragResult: any) => {
+const addColumnToConfig = (col: Column) => {
+  return {
+    reference: col,
+    enabled: !col.default?.length,
+    required: col.required,
+    title: formatTitle(col.title),
+    inputType: referenceFormat[col.format],
+    // placeholder: referencePlaceholder[col.format],
+  }
+}
+
+const applyDrag = (ref: "config" | "availableColumn", arr: Config[] | Column[], dragResult: any) => {
   const { removedIndex, addedIndex, payload } = dragResult
   if (removedIndex === null && addedIndex === null) return arr
 
@@ -89,6 +97,8 @@ const applyDrag = (arr: Config[], dragResult: any) => {
   if (removedIndex !== null) {
     itemToAdd = result.splice(removedIndex, 1)[0]
   }
+
+  itemToAdd = ref == "config" ? addColumnToConfig(itemToAdd) : itemToAdd.reference
 
   if (addedIndex !== null) {
     result.splice(addedIndex, 0, itemToAdd)
@@ -133,55 +143,78 @@ const formatTitle = (str: string) => {
 
     <hr />
 
-    <div class="w-full flex justify-center">
-      <Container @drop="onDrop" drag-handle-selector=".column-drag-handle" class="w-full max-w-screen-sm">
-        <Draggable v-for="(item, i) in config" :key="item.reference.title + i">
-          <div class="config p-4 w-full mb-2 rounded-lg border bg-gray-50" :class="{ 'opacity-50': !item.enabled }">
-            <div class="flex items-center justify-between">
-              <span class="column-drag-handle cursor-move">&#x2630;</span>
-              <div class="flex items-center space-x-4">
-                <div class="flex items-center space-x-2">
-                  <label class="text-xs text-gray-4 00" for="">Enabled:</label>
-                  <Toggle v-model="item.enabled"></Toggle>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <label class="text-xs text-gray-4 00" for="">Required:</label>
-                  <Toggle v-model="item.required"></Toggle>
-                </div>
-              </div>
-            </div>
-            <div class="py-2 relative flex flex-col" :disabled="!item.enabled">
-              <div class="absolute w-full h-full bg-transparent" v-if="!item.enabled"></div>
-              <input
-                type="text"
-                class="my-2 text-2xl font-semibold outline-none transition border-b-2 border-transparent focus:border-green-400"
-                v-model="item.title"
-                placeholder="Heading"
-                autocomplete="off"
-                :tabindex="item.enabled ? 0 : -1"
-              />
-              <Editable
-                v-model="item.description"
-                class="mb-4 text-gray-400 outline-none transition border-b-2 border-transparent focus:border-green-400"
-                data-placeholder="Write some description (optional)"
-                autocomplete="off"
-                :tabindex="item.enabled ? 0 : -1"
-              ></Editable>
-              <input
-                class="input"
-                v-if="item.inputType != 'select'"
-                :type="item.inputType"
-                v-model="item.placeholder"
-                :tabindex="item.enabled ? 0 : -1"
-              />
-              <select v-else class="input" v-model="item.placeholder" :tabindex="item.enabled ? 0 : -1">
-                <option disabled value="undefined">Please select one</option>
-                <option v-for="opt in item.reference.enum" :value="opt">{{ opt }}</option>
-              </select>
-            </div>
-          </div>
+    <div class="flex mt-4">
+      <Container
+        group-name="1"
+        @drop="onDrop('availableColumn', $event)"
+        :get-child-payload="(i: number) => availableColumn[i]"
+        class="border rounded-xl bg-gray-50 w-72 h-max p-4 flex-shrink-0"
+      >
+        <Draggable
+          v-for="(item, i) in availableColumn"
+          :key="item.title + i"
+          class="p-2.5 rounded-lg border bg-white mb-2 text-sm"
+        >
+          {{ formatTitle(item.title) }}
         </Draggable>
       </Container>
+
+      <div class="w-full flex justify-center">
+        <Container
+          @drop="onDrop('config', $event)"
+          :get-child-payload="(i: number) => config[i]"
+          drag-handle-selector=".column-drag-handle"
+          group-name="1"
+          class="w-full max-w-screen-sm min-h-72"
+        >
+          <Draggable v-for="(item, i) in config" :key="item.reference.title + i">
+            <div class="config p-4 w-full mb-2 rounded-lg border bg-gray-50" :class="{ 'opacity-50': !item.enabled }">
+              <div class="flex items-center justify-between">
+                <span class="column-drag-handle cursor-move">&#x2630;</span>
+                <div class="flex items-center space-x-4">
+                  <div class="flex items-center space-x-2">
+                    <label class="text-xs text-gray-4 00" for="">Enabled:</label>
+                    <Toggle v-model="item.enabled"></Toggle>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <label class="text-xs text-gray-4 00" for="">Required:</label>
+                    <Toggle v-model="item.required"></Toggle>
+                  </div>
+                </div>
+              </div>
+              <div class="py-2 relative flex flex-col" :disabled="!item.enabled">
+                <div class="absolute w-full h-full bg-transparent" v-if="!item.enabled"></div>
+                <input
+                  type="text"
+                  class="my-2 text-2xl font-semibold outline-none transition border-b-2 border-transparent focus:border-green-400"
+                  v-model="item.title"
+                  placeholder="Heading"
+                  autocomplete="off"
+                  :tabindex="item.enabled ? 0 : -1"
+                />
+                <Editable
+                  v-model="item.description"
+                  class="mb-4 text-gray-400 outline-none transition border-b-2 border-transparent focus:border-green-400"
+                  data-placeholder="Write some description (optional)"
+                  autocomplete="off"
+                  :tabindex="item.enabled ? 0 : -1"
+                ></Editable>
+                <input
+                  class="input"
+                  v-if="item.inputType != 'select'"
+                  :type="item.inputType"
+                  v-model="item.placeholder"
+                  :tabindex="item.enabled ? 0 : -1"
+                />
+                <select v-else class="input" v-model="item.placeholder" :tabindex="item.enabled ? 0 : -1">
+                  <option disabled value="undefined">Please select one</option>
+                  <option v-for="opt in item.reference.enum" :value="opt">{{ opt }}</option>
+                </select>
+              </div>
+            </div>
+          </Draggable>
+        </Container>
+      </div>
     </div>
   </div>
 </template>
