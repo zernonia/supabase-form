@@ -160,14 +160,13 @@ const formatTitle = (str: string) => {
                 autocomplete="off"
                 :tabindex="item.enabled ? 0 : -1"
               />
-              <input
-                type="text"
-                class="mb-4 text-gray-400 outline-none transition border-b-2 border-transparent focus:border-green-400"
+              <Editable
                 v-model="item.description"
-                placeholder="Write some description (optional)"
+                class="mb-4 text-gray-400 outline-none transition border-b-2 border-transparent focus:border-green-400"
+                data-placeholder="Write some description (optional)"
                 autocomplete="off"
                 :tabindex="item.enabled ? 0 : -1"
-              />
+              ></Editable>
               <input
                 class="input"
                 v-if="item.inputType != 'select'"
