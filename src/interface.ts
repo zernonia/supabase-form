@@ -30,7 +30,7 @@ export interface ConfigColumn {
 
 export interface Config {
   title: string
-  description: string
-  logo: string
+  description?: string
+  logo?: string
   column: ConfigColumn[]
 }

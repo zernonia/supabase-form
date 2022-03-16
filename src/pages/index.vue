@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue"
-import { Column, ConfigColumn, TableState, Table } from "@/interface"
+import { Column, Config, ConfigColumn, TableState, Table } from "@/interface"
 import { referenceFormat, referencePlaceholder } from "@/utils"
 //@ts-ignore
 import { Container, Draggable } from "vue-dndrop"
@@ -11,11 +11,18 @@ const supabaseInfo = ref({
   anon: import.meta.env.VITE_SUPABASE_ANON_KEY,
 })
 
+const config = ref<Config>({
+  title: "",
+  column: [],
+})
+
 const tables = ref<TableState>()
 const selectedTable = ref<Table>()
 const availableColumn = ref<Column[]>([])
 const configColumn = ref<ConfigColumn[]>([])
+
 const isPreviewing = ref(false)
+
 const fetchData = () => {
   fetch(`${supabaseInfo.value.url}/rest/v1/?apikey=${supabaseInfo.value.anon}`)
     .then((res) => res.json())
@@ -60,6 +67,7 @@ const fetchData = () => {
 
 const selectTable = () => {
   if (!selectedTable.value?.columns) return
+  config.value.title = selectedTable.value.title
   configColumn.value = selectedTable.value.columns.filter((i) => i.required).map((i) => addColumnToConfig(i))
   availableColumn.value = selectedTable.value.columns.filter((i) => !i.required)
 }
@@ -156,59 +164,76 @@ const formatTitle = (str: string) => {
       </Container>
 
       <div class="w-full flex justify-center">
-        <Container
-          @drop="onDrop('configColumn', $event)"
-          :get-child-payload="(i: number) => configColumn[i]"
-          :drop-placeholder="{
-            className: 'drop-preview',
-            animationDuration: '150',
-            showOnTop: true,
-          }"
-          drag-handle-selector=".column-drag-handle"
-          group-name="1"
-          class="w-full max-w-screen-sm min-h-72"
-        >
-          <Draggable v-for="(item, i) in configColumn" :key="item.reference.title + i">
-            <div class="relative config p-4 w-full rounded-lg border bg-gray-50">
-              <span
-                class="column-drag-handle absolute cursor-move top-0 left-1/2 transform -translate-x-1/2 text-gray-400"
-                ><i-ph-dots-six-bold></i-ph-dots-six-bold
-              ></span>
-              <div class="relative flex flex-col">
-                <input
-                  type="text"
-                  class="h2 mb-1 outline-none transition border-b-2 border-transparent focus:border-green-400"
-                  v-model="item.title"
-                  placeholder="Heading"
-                  autocomplete="off"
-                />
-                <Editable
-                  v-model="item.description"
-                  class="description mb-4 outline-none"
-                  data-placeholder="Write some description (optional)"
-                  autocomplete="off"
-                ></Editable>
-                <input
-                  class="input"
-                  v-if="item.inputType != 'select'"
-                  :type="item.inputType"
-                  v-model="item.placeholder"
-                />
-                <select v-else class="input" v-model="item.placeholder">
-                  <option disabled value="undefined">Please select one</option>
-                  <option v-for="opt in item.reference.enum" :value="opt">{{ opt }}</option>
-                </select>
-              </div>
+        <div class="w-full max-w-screen-sm flex flex-col items-center">
+          <div class="w-full">
+            <Editable
+              v-model="config.title"
+              class="h2 mb-4 outline-none"
+              data-placeholder="Write some description (optional)"
+              autocomplete="off"
+            ></Editable>
+            <Editable
+              v-model="config.description"
+              class="description mb-4 outline-none"
+              data-placeholder="Write some description (optional)"
+              autocomplete="off"
+            ></Editable>
+          </div>
 
-              <div class="mt-4">
-                <div class="w-min flex items-center space-x-2">
-                  <label class="text-xs text-gray-400" for="">Required:</label>
-                  <Toggle v-model="item.required"></Toggle>
+          <Container
+            @drop="onDrop('configColumn', $event)"
+            :get-child-payload="(i: number) => configColumn[i]"
+            :drop-placeholder="{
+              className: 'drop-preview',
+              animationDuration: '150',
+              showOnTop: true,
+            }"
+            drag-handle-selector=".column-drag-handle"
+            group-name="1"
+            class="w-full min-h-72"
+          >
+            <Draggable v-for="(item, i) in configColumn" :key="item.reference.title + i">
+              <div class="relative config p-4 w-full rounded-lg border bg-gray-50">
+                <span
+                  class="column-drag-handle absolute cursor-move top-0 left-1/2 transform -translate-x-1/2 text-gray-400"
+                  ><i-ph-dots-six-bold></i-ph-dots-six-bold
+                ></span>
+                <div class="relative flex flex-col">
+                  <input
+                    type="text"
+                    class="h2 mb-1 outline-none transition border-b-2 border-transparent focus:border-green-400"
+                    v-model="item.title"
+                    placeholder="Heading"
+                    autocomplete="off"
+                  />
+                  <Editable
+                    v-model="item.description"
+                    class="description mb-4 outline-none"
+                    data-placeholder="Write some description (optional)"
+                    autocomplete="off"
+                  ></Editable>
+                  <input
+                    class="input"
+                    v-if="item.inputType != 'select'"
+                    :type="item.inputType"
+                    v-model="item.placeholder"
+                  />
+                  <select v-else class="input" v-model="item.placeholder">
+                    <option disabled value="undefined">Please select one</option>
+                    <option v-for="opt in item.reference.enum" :value="opt">{{ opt }}</option>
+                  </select>
+                </div>
+
+                <div class="mt-4">
+                  <div class="w-min flex items-center space-x-2">
+                    <label class="text-xs text-gray-400" for="">Required:</label>
+                    <Toggle v-model="item.required"></Toggle>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Draggable>
-        </Container>
+            </Draggable>
+          </Container>
+        </div>
       </div>
     </div>
 
