@@ -18,7 +18,7 @@ export interface TableState {
   [key: string]: Table
 }
 
-export interface Config {
+export interface ConfigColumn {
   // enabled: boolean
   required: boolean
   title: string
@@ -26,4 +26,11 @@ export interface Config {
   inputType: string
   placeholder?: string | boolean | number | Date
   reference: Column
+}
+
+export interface Config {
+  title: string
+  description: string
+  logo: string
+  column: ConfigColumn[]
 }

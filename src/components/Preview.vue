@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Config } from "@/interface"
+import { ConfigColumn } from "@/interface"
 import { PropType } from "vue"
 
 const props = defineProps({
-  configs: Object as PropType<Config[]>,
+  configs: Object as PropType<ConfigColumn[]>,
 })
 const emits = defineEmits(["close"])
 </script>

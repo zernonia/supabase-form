@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue"
-import { Column, Config, TableState, Table } from "@/interface"
+import { Column, ConfigColumn, TableState, Table } from "@/interface"
 import { referenceFormat, referencePlaceholder } from "@/utils"
 //@ts-ignore
 import { Container, Draggable } from "vue-dndrop"
@@ -14,7 +14,7 @@ const supabaseInfo = ref({
 const tables = ref<TableState>()
 const selectedTable = ref<Table>()
 const availableColumn = ref<Column[]>([])
-const config = ref<Config[]>([])
+const configColumn = ref<ConfigColumn[]>([])
 const isPreviewing = ref(false)
 const fetchData = () => {
   fetch(`${supabaseInfo.value.url}/rest/v1/?apikey=${supabaseInfo.value.anon}`)
@@ -60,14 +60,14 @@ const fetchData = () => {
 
 const selectTable = () => {
   if (!selectedTable.value?.columns) return
-  config.value = selectedTable.value.columns.filter((i) => i.required).map((i) => addColumnToConfig(i))
+  configColumn.value = selectedTable.value.columns.filter((i) => i.required).map((i) => addColumnToConfig(i))
   availableColumn.value = selectedTable.value.columns.filter((i) => !i.required)
 }
 
-const onDrop = (ref: "config" | "availableColumn", dropResult: any) => {
-  if (!config.value) return
-  if (ref == "config") {
-    config.value = applyDrag("config", config.value, dropResult) as Config[]
+const onDrop = (ref: "configColumn" | "availableColumn", dropResult: any) => {
+  if (!configColumn.value) return
+  if (ref == "configColumn") {
+    configColumn.value = applyDrag("configColumn", configColumn.value, dropResult) as ConfigColumn[]
   } else if (ref == "availableColumn") {
     availableColumn.value = applyDrag("availableColumn", availableColumn.value, dropResult) as Column[]
   }
@@ -84,7 +84,7 @@ const addColumnToConfig = (col: Column) => {
   }
 }
 
-const applyDrag = (ref: "config" | "availableColumn", arr: Config[] | Column[], dragResult: any) => {
+const applyDrag = (ref: "configColumn" | "availableColumn", arr: ConfigColumn[] | Column[], dragResult: any) => {
   const { removedIndex, addedIndex, payload } = dragResult
   if (removedIndex === null && addedIndex === null) return arr
 
@@ -95,7 +95,7 @@ const applyDrag = (ref: "config" | "availableColumn", arr: Config[] | Column[], 
     itemToAdd = result.splice(removedIndex, 1)[0]
   }
 
-  itemToAdd = ref == "config" ? addColumnToConfig(itemToAdd) : itemToAdd.reference ?? itemToAdd
+  itemToAdd = ref == "configColumn" ? addColumnToConfig(itemToAdd) : itemToAdd.reference ?? itemToAdd
 
   if (addedIndex !== null) {
     result.splice(addedIndex, 0, itemToAdd)
@@ -157,8 +157,8 @@ const formatTitle = (str: string) => {
 
       <div class="w-full flex justify-center">
         <Container
-          @drop="onDrop('config', $event)"
-          :get-child-payload="(i: number) => config[i]"
+          @drop="onDrop('configColumn', $event)"
+          :get-child-payload="(i: number) => configColumn[i]"
           :drop-placeholder="{
             className: 'drop-preview',
             animationDuration: '150',
@@ -168,7 +168,7 @@ const formatTitle = (str: string) => {
           group-name="1"
           class="w-full max-w-screen-sm min-h-72"
         >
-          <Draggable v-for="(item, i) in config" :key="item.reference.title + i">
+          <Draggable v-for="(item, i) in configColumn" :key="item.reference.title + i">
             <div class="relative config p-4 w-full rounded-lg border bg-gray-50">
               <span
                 class="column-drag-handle absolute cursor-move top-0 left-1/2 transform -translate-x-1/2 text-gray-400"
@@ -212,7 +212,7 @@ const formatTitle = (str: string) => {
       </div>
     </div>
 
-    <Preview v-if="isPreviewing" :configs="config" @close="isPreviewing = false"></Preview>
+    <Preview v-if="isPreviewing" :configs="configColumn" @close="isPreviewing = false"></Preview>
   </div>
 </template>
 
