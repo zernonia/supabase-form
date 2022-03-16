@@ -67,7 +67,7 @@ const fetchData = () => {
 
 const selectTable = () => {
   if (!selectedTable.value?.columns) return
-  config.value.title = selectedTable.value.title
+  config.value.title = formatTitle(selectedTable.value.title)
   configColumn.value = selectedTable.value.columns.filter((i) => i.required).map((i) => addColumnToConfig(i))
   availableColumn.value = selectedTable.value.columns.filter((i) => !i.required)
 }
@@ -163,18 +163,18 @@ const formatTitle = (str: string) => {
         </Draggable>
       </Container>
 
-      <div class="w-full flex justify-center">
+      <div class="w-full flex justify-center bg-gray-50">
         <div class="w-full max-w-screen-sm flex flex-col items-center">
-          <div class="w-full">
+          <div class="w-full my-12 px-4 py-12 bg-white rounded-xl">
             <Editable
               v-model="config.title"
-              class="h2 mb-4 outline-none"
+              class="h1 mb-2 outline-none"
               data-placeholder="Write some description (optional)"
               autocomplete="off"
             ></Editable>
             <Editable
               v-model="config.description"
-              class="description mb-4 outline-none"
+              class="subtitle mb-4 outline-none"
               data-placeholder="Write some description (optional)"
               autocomplete="off"
             ></Editable>
@@ -193,7 +193,7 @@ const formatTitle = (str: string) => {
             class="w-full min-h-72"
           >
             <Draggable v-for="(item, i) in configColumn" :key="item.reference.title + i">
-              <div class="relative config p-4 w-full rounded-lg border bg-gray-50">
+              <div class="relative config p-4 bg-gray-50 w-full rounded-lg">
                 <span
                   class="column-drag-handle absolute cursor-move top-0 left-1/2 transform -translate-x-1/2 text-gray-400"
                   ><i-ph-dots-six-bold></i-ph-dots-six-bold
@@ -249,6 +249,6 @@ const formatTitle = (str: string) => {
   @apply pb-2;
 }
 .drop-preview {
-  @apply border-2 border-dashed rounded-xl bg-green-50 mb-2;
+  @apply border-2 border-dashed rounded-xl bg-white mb-2;
 }
 </style>
