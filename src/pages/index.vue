@@ -159,6 +159,11 @@ const formatTitle = (str: string) => {
         <Container
           @drop="onDrop('config', $event)"
           :get-child-payload="(i: number) => config[i]"
+          :drop-placeholder="{
+            className: 'drop-preview',
+            animationDuration: '150',
+            showOnTop: true,
+          }"
           drag-handle-selector=".column-drag-handle"
           group-name="1"
           class="w-full max-w-screen-sm min-h-72"
@@ -217,5 +222,8 @@ const formatTitle = (str: string) => {
 }
 .dndrop-draggable-wrapper {
   @apply pb-2;
+}
+.drop-preview {
+  @apply border-2 border-dashed rounded-xl bg-green-50 mb-2;
 }
 </style>
