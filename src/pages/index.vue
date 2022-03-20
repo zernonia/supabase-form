@@ -150,18 +150,19 @@ const formatTitle = (str: string) => {
     <hr />
 
     <div class="flex mt-4">
-      <Container
-        group-name="1"
-        @drop="onDrop('availableColumn', $event)"
-        :get-child-payload="(i: number) => availableColumn[i]"
-        class="border rounded-xl bg-gray-50 w-full max-w-72 h-max p-4 flex-shrink-0"
-      >
-        <Draggable v-for="(item, i) in availableColumn" :key="item.title + i">
-          <div class="p-2.5 rounded-lg border bg-white text-sm cursor-move">
-            {{ formatTitle(item.title) }}
-          </div>
-        </Draggable>
-      </Container>
+      <div class="border rounded-xl bg-gray-50 w-full max-w-72 h-max p-4 flex-shrink-0">
+        <Container
+          group-name="1"
+          @drop="onDrop('availableColumn', $event)"
+          :get-child-payload="(i: number) => availableColumn[i]"
+        >
+          <Draggable v-for="(item, i) in availableColumn" :key="item.title + i">
+            <div class="p-2.5 rounded-lg border bg-white text-sm cursor-move">
+              {{ formatTitle(item.title) }}
+            </div>
+          </Draggable>
+        </Container>
+      </div>
 
       <div class="w-full flex justify-center bg-gray-50">
         <div class="w-full max-w-screen-sm flex flex-col items-center">
