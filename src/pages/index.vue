@@ -150,7 +150,7 @@ const formatTitle = (str: string) => {
     <hr />
 
     <div class="flex mt-4">
-      <div class="border rounded-xl bg-gray-50 w-full max-w-72 h-max p-4 flex-shrink-0">
+      <div class="border rounded-xl bg-gray-50 w-full max-w-72 h-max p-4 mr-4 flex-shrink-0">
         <Container
           group-name="1"
           @drop="onDrop('availableColumn', $event)"
@@ -241,15 +241,3 @@ const formatTitle = (str: string) => {
     <Preview v-if="isPreviewing" :configs="configColumn" @close="isPreviewing = false"></Preview>
   </div>
 </template>
-
-<style lang="postcss">
-.config {
-  @apply text-sm;
-}
-.dndrop-draggable-wrapper {
-  @apply pb-2;
-}
-.drop-preview {
-  @apply border-2 border-dashed rounded-xl bg-white mb-2;
-}
-</style>

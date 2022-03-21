@@ -14,12 +14,5 @@ const onChange = (ev: Event) => {
 </script>
 
 <template>
-  <div contenteditable="true" ref="target" v-html="modelValue" @focusout="onChange"></div>
+  <div class="editable" contenteditable="true" ref="target" v-html="modelValue" @focusout="onChange"></div>
 </template>
-
-<style scoped lang="postcss">
-div:empty:before {
-  content: attr(data-placeholder);
-  @apply text-gray-400;
-}
-</style>

@@ -24,15 +24,3 @@ const onChange = (ev: Event) => {
     </label>
   </div>
 </template>
-
-<style lang="postcss">
-input:checked ~ .toggle-bg {
-  @apply bg-green-400;
-}
-input:checked ~ .toggle-dot {
-  @apply transform translate-x-full;
-}
-input:focus ~ .toggle-bg {
-  @apply ring-green-500;
-}
-</style>

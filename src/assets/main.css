@@ -34,3 +34,31 @@ input {
 .description {
   @apply text-gray-400;
 }
+
+/* Toggle */
+input:checked ~ .toggle-bg {
+  @apply bg-green-400;
+}
+input:checked ~ .toggle-dot {
+  @apply transform translate-x-full;
+}
+input:focus ~ .toggle-bg {
+  @apply ring-green-500;
+}
+
+/* Editable */
+.editable:empty:before {
+  content: attr(data-placeholder);
+  @apply text-gray-400;
+}
+
+/* Dnd */
+.config {
+  @apply text-sm;
+}
+.dndrop-draggable-wrapper {
+  @apply pb-2;
+}
+.drop-preview {
+  @apply border-2 border-dashed rounded-xl bg-white mb-2;
+}
