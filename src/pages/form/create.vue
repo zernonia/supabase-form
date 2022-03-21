@@ -5,7 +5,9 @@ import { referenceFormat, referencePlaceholder } from "@/utils"
 //@ts-ignore
 import { Container, Draggable } from "vue-dndrop"
 import Preview from "@/components/Preview.vue"
+import { useRouter } from "vue-router"
 
+const router = useRouter()
 const supabaseInfo = ref({
   url: import.meta.env.VITE_SUPABASE_URL,
   anon: import.meta.env.VITE_SUPABASE_ANON_KEY,
@@ -130,8 +132,8 @@ const save = () => {
     }),
   })
     .then((res) => res.json())
-    .then((a) => {
-      console.log(a)
+    .then((res) => {
+      router.replace(`/form/${res.slug}`)
     })
 }
 </script>
