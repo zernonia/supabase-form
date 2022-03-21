@@ -2,7 +2,6 @@
 import { Config } from "@/interface"
 import { PropType, watch } from "vue"
 import { useMagicKeys } from "@vueuse/core"
-import { emit } from "process"
 
 const props = defineProps({
   config: Object as PropType<Config>,
