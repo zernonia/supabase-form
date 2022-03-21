@@ -8,9 +8,11 @@ declare module 'vue' {
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     IFluentReOrderDotsHorizontal16Filled: typeof import('~icons/fluent/re-order-dots-horizontal16-filled')['default']
     'IMdi:close': typeof import('~icons/mdi/close')['default']
+    'IMdi:plus': typeof import('~icons/mdi/plus')['default']
     IPhDotsSixBold: typeof import('~icons/ph/dots-six-bold')['default']
     Preview: typeof import('./src/components/Preview.vue')['default']
     Toggle: typeof import('./src/components/Toggle.vue')['default']
+    Upload: typeof import('./src/components/Upload.vue')['default']
   }
 }
 

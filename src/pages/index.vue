@@ -13,6 +13,7 @@ const supabaseInfo = ref({
 
 const config = ref<Config>({
   title: "",
+  logo: "https://www.madewithsupabase.com/_nuxt/logo.fbcda856.svg",
   column: [],
 })
 
@@ -165,7 +166,8 @@ const formatTitle = (str: string) => {
 
       <div class="w-full flex justify-center bg-gray-50">
         <div class="w-full max-w-screen-sm flex flex-col items-center">
-          <div class="w-full my-12 px-4 py-12 bg-white rounded-xl">
+          <div class="w-full my-12 px-8 py-12 bg-white">
+            <Upload v-model="config.logo"></Upload>
             <Editable
               v-model="config.title"
               class="h1 mb-2 outline-none"
@@ -236,7 +238,6 @@ const formatTitle = (str: string) => {
         </div>
       </div>
     </div>
-    {{ config }}
     <Preview v-if="isPreviewing" :config="config" @close="isPreviewing = false"></Preview>
   </div>
 </template>
