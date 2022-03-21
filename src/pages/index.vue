@@ -19,7 +19,6 @@ const config = ref<Config>({
 const tables = ref<TableState>()
 const selectedTable = ref<Table>()
 const availableColumn = ref<Column[]>([])
-const configColumn = ref<ConfigColumn[]>([])
 
 const isPreviewing = ref(false)
 
@@ -68,14 +67,14 @@ const fetchData = () => {
 const selectTable = () => {
   if (!selectedTable.value?.columns) return
   config.value.title = formatTitle(selectedTable.value.title)
-  configColumn.value = selectedTable.value.columns.filter((i) => i.required).map((i) => addColumnToConfig(i))
+  config.value.column = selectedTable.value.columns.filter((i) => i.required).map((i) => addColumnToConfig(i))
   availableColumn.value = selectedTable.value.columns.filter((i) => !i.required)
 }
 
 const onDrop = (ref: "configColumn" | "availableColumn", dropResult: any) => {
-  if (!configColumn.value) return
+  if (!config.value.column) return
   if (ref == "configColumn") {
-    configColumn.value = applyDrag("configColumn", configColumn.value, dropResult) as ConfigColumn[]
+    config.value.column = applyDrag("configColumn", config.value.column, dropResult) as ConfigColumn[]
   } else if (ref == "availableColumn") {
     availableColumn.value = applyDrag("availableColumn", availableColumn.value, dropResult) as Column[]
   }
@@ -183,7 +182,7 @@ const formatTitle = (str: string) => {
 
           <Container
             @drop="onDrop('configColumn', $event)"
-            :get-child-payload="(i: number) => configColumn[i]"
+            :get-child-payload="(i: number) => config.column[i]"
             :drop-placeholder="{
               className: 'drop-preview',
               animationDuration: '150',
@@ -193,7 +192,7 @@ const formatTitle = (str: string) => {
             group-name="1"
             class="w-full min-h-72"
           >
-            <Draggable v-for="(item, i) in configColumn" :key="item.reference.title + i">
+            <Draggable v-for="(item, i) in config.column" :key="item.reference.title + i">
               <div class="relative config p-4 bg-gray-50 w-full rounded-lg">
                 <span
                   class="column-drag-handle absolute cursor-move top-0 left-1/2 transform -translate-x-1/2 text-gray-400"
@@ -237,7 +236,7 @@ const formatTitle = (str: string) => {
         </div>
       </div>
     </div>
-
-    <Preview v-if="isPreviewing" :configs="configColumn" @close="isPreviewing = false"></Preview>
+    {{ config }}
+    <Preview v-if="isPreviewing" :config="config" @close="isPreviewing = false"></Preview>
   </div>
 </template>
