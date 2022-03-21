@@ -164,9 +164,10 @@ const formatTitle = (str: string) => {
         </Container>
       </div>
 
-      <div class="w-full flex justify-center bg-gray-50">
-        <div class="w-full max-w-screen-sm flex flex-col items-center">
-          <div class="w-full my-12 px-8 py-12 bg-white">
+      <div class="relative w-full flex justify-center bg-gray-50">
+        <div class="absolute w-full h-64 inset-0 bg-green-400 z-0"></div>
+        <div class="my-20 w-full max-w-screen-sm flex flex-col items-center z-10">
+          <div class="w-full my-12 p-12 bg-white">
             <Upload v-model="config.logo"></Upload>
             <Editable
               v-model="config.title"
@@ -192,48 +193,50 @@ const formatTitle = (str: string) => {
             }"
             drag-handle-selector=".column-drag-handle"
             group-name="1"
-            class="w-full min-h-72"
+            class="w-full"
           >
-            <Draggable v-for="(item, i) in config.column" :key="item.reference.title + i">
-              <div class="relative config p-4 bg-gray-50 w-full rounded-lg">
-                <span
-                  class="column-drag-handle absolute cursor-move top-0 left-1/2 transform -translate-x-1/2 text-gray-400"
-                  ><i-ph-dots-six-bold></i-ph-dots-six-bold
-                ></span>
-                <div class="relative flex flex-col">
-                  <input
-                    type="text"
-                    class="h2 mb-1 outline-none transition border-b-2 border-transparent focus:border-green-400"
-                    v-model="item.title"
-                    placeholder="Heading"
-                    autocomplete="off"
-                  />
-                  <Editable
-                    v-model="item.description"
-                    class="description mb-4 outline-none"
-                    data-placeholder="Write some description (optional)"
-                    autocomplete="off"
-                  ></Editable>
-                  <input
-                    class="input"
-                    v-if="item.inputType != 'select'"
-                    :type="item.inputType"
-                    v-model="item.placeholder"
-                  />
-                  <select v-else class="input" v-model="item.placeholder">
-                    <option disabled value="undefined">Please select one</option>
-                    <option v-for="opt in item.reference.enum" :value="opt">{{ opt }}</option>
-                  </select>
-                </div>
+            <template v-if="config.column.length">
+              <Draggable v-for="(item, i) in config.column" :key="item.reference.title + i">
+                <div class="relative config px-12 py-4 bg-gray-50 hover:bg-gray-100 transition w-full rounded-lg">
+                  <span
+                    class="column-drag-handle absolute cursor-move top-0 left-1/2 transform -translate-x-1/2 text-gray-400"
+                    ><i-ph-dots-six-bold></i-ph-dots-six-bold
+                  ></span>
+                  <div class="relative flex flex-col">
+                    <input
+                      type="text"
+                      class="h2 mb-1 outline-none transition border-b-2 border-transparent focus:border-green-400"
+                      v-model="item.title"
+                      placeholder="Heading"
+                      autocomplete="off"
+                    />
+                    <Editable
+                      v-model="item.description"
+                      class="description mb-4 outline-none"
+                      data-placeholder="Write some description (optional)"
+                      autocomplete="off"
+                    ></Editable>
+                    <input
+                      class="input"
+                      v-if="item.inputType != 'select'"
+                      :type="item.inputType"
+                      v-model="item.placeholder"
+                    />
+                    <select v-else class="input" v-model="item.placeholder">
+                      <option disabled value="undefined">Please select one</option>
+                      <option v-for="opt in item.reference.enum" :value="opt">{{ opt }}</option>
+                    </select>
+                  </div>
 
-                <div class="mt-4">
-                  <div class="w-min flex items-center space-x-2">
-                    <label class="text-xs text-gray-400" for="">Required:</label>
-                    <Toggle v-model="item.required"></Toggle>
+                  <div class="mt-4">
+                    <div class="w-min flex items-center space-x-2">
+                      <label class="text-xs text-gray-400" for="">Required:</label>
+                      <Toggle v-model="item.required"></Toggle>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Draggable>
+              </Draggable>
+            </template>
           </Container>
         </div>
       </div>
