@@ -292,6 +292,8 @@ fetchData()
         </div>
       </div>
     </div>
-    <Form v-if="isPreviewing" :config="config" @close="isPreviewing = false" preview></Form>
+    <Preview v-if="isPreviewing" @close="isPreviewing = false">
+      <Form :config="config"></Form>
+    </Preview>
   </div>
 </template>
