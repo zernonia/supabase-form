@@ -4,7 +4,7 @@ import { Column, Config, ConfigColumn, TableState, Table } from "@/interface"
 import { referenceFormat, referencePlaceholder } from "@/utils"
 //@ts-ignore
 import { Container, Draggable } from "vue-dndrop"
-import Preview from "@/components/Preview.vue"
+import Form from "@/components/Form.vue"
 import { useRouter } from "vue-router"
 
 const router = useRouter()
@@ -258,6 +258,6 @@ const save = () => {
         </div>
       </div>
     </div>
-    <Preview v-if="isPreviewing" :config="config" @close="isPreviewing = false"></Preview>
+    <Form v-if="isPreviewing" :config="config" @close="isPreviewing = false" preview></Form>
   </div>
 </template>
