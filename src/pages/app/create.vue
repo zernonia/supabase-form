@@ -124,7 +124,7 @@ const formatTitle = (str: string) => {
 }
 
 const save = () => {
-  fetch("/api/save", {
+  fetch("/api/form/create", {
     method: "POST",
     body: JSON.stringify({
       config: config.value,
@@ -133,7 +133,7 @@ const save = () => {
   })
     .then((res) => res.json())
     .then((res) => {
-      router.replace(`/form/${res.slug}`)
+      router.replace(`/app/${res.slug}`)
     })
 }
 </script>

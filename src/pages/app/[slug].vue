@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, watch } from "vue"
 import { Column, Config, ConfigColumn, TableState, Table } from "@/interface"
 import { referenceFormat, referencePlaceholder } from "@/utils"
 //@ts-ignore
 import { Container, Draggable } from "vue-dndrop"
 import Form from "@/components/Form.vue"
+import { useFetch } from "@vueuse/core"
+import { useRoute } from "vue-router"
+
+const route = useRoute()
 
 const supabaseInfo = ref({
   url: import.meta.env.VITE_SUPABASE_URL,
@@ -122,9 +126,10 @@ const formatTitle = (str: string) => {
 }
 
 const save = () => {
-  fetch("/api/save", {
+  fetch("/api/form/update", {
     method: "POST",
     body: JSON.stringify({
+      slug: route.params.slug,
       config: config.value,
       key: supabaseInfo.value,
     }),
@@ -134,6 +139,17 @@ const save = () => {
       console.log(a)
     })
 }
+
+const { isFetching, data } = useFetch<{ config: Config }>("/api/form/get", {
+  method: "POST",
+  body: JSON.stringify({
+    slug: route.params.slug,
+  }),
+}).json()
+
+watch(data, (n) => {
+  if (n?.config) config.value = n.config
+})
 </script>
 
 <template>

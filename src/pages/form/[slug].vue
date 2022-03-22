@@ -7,7 +7,7 @@ import { useFetch } from "@vueuse/core"
 
 const route = useRoute()
 
-const { isFetching, data } = useFetch<{ config: Config }>("/api/form", {
+const { isFetching, data } = useFetch<{ config: Config }>("/api/form/get", {
   method: "POST",
   body: JSON.stringify({
     slug: route.params.slug,
