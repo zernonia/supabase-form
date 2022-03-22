@@ -6,9 +6,10 @@ import { referenceFormat, referencePlaceholder } from "@/utils"
 import { Container, Draggable } from "vue-dndrop"
 import Form from "@/components/Form.vue"
 import { useFetch } from "@vueuse/core"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 
 const route = useRoute()
+const router = useRouter()
 
 const supabaseInfo = ref({
   url: import.meta.env.VITE_SUPABASE_URL,
@@ -27,7 +28,7 @@ const availableColumn = ref<Column[]>([])
 
 const isPreviewing = ref(false)
 
-const fetchData = () => {
+const fetchSchema = () => {
   fetch(`${supabaseInfo.value.url}/rest/v1/?apikey=${supabaseInfo.value.anon}`)
     .then((res) => res.json())
     .then((res) => {
@@ -126,30 +127,49 @@ const formatTitle = (str: string) => {
 }
 
 const save = () => {
-  fetch("/api/form/update", {
+  if (route.path != "/app/create") {
+    fetch("/api/form/update", {
+      method: "POST",
+      body: JSON.stringify({
+        slug: route.params.slug,
+        config: config.value,
+        key: supabaseInfo.value,
+      }),
+    })
+      .then((res) => res.json())
+      .then((a) => {
+        console.log(a)
+      })
+  } else {
+    fetch("/api/form/create", {
+      method: "POST",
+      body: JSON.stringify({
+        config: config.value,
+        key: supabaseInfo.value,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        router.replace(`/app/${res.slug}`)
+      })
+  }
+}
+
+const fetchData = () => {
+  if (route.params.slug == "create") return
+  fetch("/api/form/get", {
     method: "POST",
     body: JSON.stringify({
       slug: route.params.slug,
-      config: config.value,
-      key: supabaseInfo.value,
     }),
   })
     .then((res) => res.json())
-    .then((a) => {
-      console.log(a)
+    .then((res) => {
+      config.value = res.config
     })
 }
 
-const { isFetching, data } = useFetch<{ config: Config }>("/api/form/get", {
-  method: "POST",
-  body: JSON.stringify({
-    slug: route.params.slug,
-  }),
-}).json()
-
-watch(data, (n) => {
-  if (n?.config) config.value = n.config
-})
+fetchData()
 </script>
 
 <template>
@@ -161,7 +181,7 @@ watch(data, (n) => {
       <label class="label" for="supabase-key">anon</label>
       <input class="input" name="supabase-key" type="text" v-model="supabaseInfo.anon" />
 
-      <button class="button" @click="fetchData">Fetch</button>
+      <button class="button" @click="fetchSchema">Fetch</button>
     </div>
 
     <br />
@@ -251,9 +271,9 @@ watch(data, (n) => {
                       class="input"
                       v-if="item.inputType != 'select'"
                       :type="item.inputType"
-                      v-model="item.placeholder"
+                      v-model="item.input"
                     />
-                    <select v-else class="input" v-model="item.placeholder">
+                    <select v-else class="input" v-model="item.input">
                       <option disabled value="undefined">Please select one</option>
                       <option v-for="opt in item.reference.enum" :value="opt">{{ opt }}</option>
                     </select>
