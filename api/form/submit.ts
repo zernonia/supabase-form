@@ -1,6 +1,13 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node"
+import { supabase } from "../_lib/supabase"
 
-export default (request: VercelRequest, response: VercelResponse) => {
-  const { name } = request.query
-  response.status(200).send(`Hello ${name}!`)
+export default async (request: VercelRequest, response: VercelResponse) => {
+  const body = JSON.parse(request.body)
+
+  const { data, error } = await supabase.from("forms").update(body).eq("slug", body.slug).single()
+  if (error) {
+    response.status(400).send(error)
+  } else {
+    response.json(data)
+  }
 }
