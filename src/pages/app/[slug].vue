@@ -12,8 +12,8 @@ const route = useRoute()
 const router = useRouter()
 
 const supabaseInfo = ref({
-  url: import.meta.env.VITE_SUPABASE_URL,
-  anon: import.meta.env.VITE_SUPABASE_ANON_KEY,
+  url: "",
+  anon: "",
 })
 
 const config = ref<Config>({
@@ -166,6 +166,7 @@ const fetchData = () => {
     .then((res) => res.json())
     .then((res) => {
       config.value = res.config
+      supabaseInfo.value = res.key
     })
 }
 
