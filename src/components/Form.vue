@@ -22,8 +22,8 @@ const emits = defineEmits(["submit"])
         <h2 class="h2">{{ cfg.title }} <span v-if="cfg.required">*</span></h2>
         <h3 v-if="cfg.description" class="description mb-2" v-html="cfg.description"></h3>
         <div class="mt-4">
-          <input class="input" v-if="cfg.inputType != 'select'" :type="cfg.inputType" v-model="cfg.input" />
-          <select v-else class="input" v-model="cfg.input">
+          <input class="input" v-if="cfg.inputType != 'select'" :type="cfg.inputType" v-model="cfg.placeholder" />
+          <select v-else class="input" v-model="cfg.placeholder">
             <option disabled value="undefined">Please select one</option>
             <option v-for="opt in cfg.reference.enum" :value="opt">{{ opt }}</option>
           </select>

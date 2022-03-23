@@ -272,9 +272,9 @@ fetchData()
                       class="input"
                       v-if="item.inputType != 'select'"
                       :type="item.inputType"
-                      v-model="item.input"
+                      v-model="item.placeholder"
                     />
-                    <select v-else class="input" v-model="item.input">
+                    <select v-else class="input" v-model="item.placeholder">
                       <option disabled value="undefined">Please select one</option>
                       <option v-for="opt in item.reference.enum" :value="opt">{{ opt }}</option>
                     </select>
