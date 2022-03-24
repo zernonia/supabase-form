@@ -36,7 +36,9 @@ const submitForm = async (form: FormInput) => {
 
 <template>
   <div class="min-h-screen min-w-screen flex bg-gray-50">
-    <div class="self-center justify-self-center text-center w-full text-4xl" v-if="isFetching">Loading...</div>
+    <div class="self-center justify-self-center text-center w-full text-4xl" v-if="isFetching">
+      Loading <i-eos-icons-bubble-loading class="text-2xl"></i-eos-icons-bubble-loading>
+    </div>
     <Form
       v-else-if="data?.config"
       :config="data.config"
