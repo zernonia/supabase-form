@@ -9,6 +9,7 @@ declare module 'vue' {
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     IFluentReOrderDotsHorizontal16Filled: typeof import("~icons/fluent/re-order-dots-horizontal16-filled")["default"]
     'IMdi:close': typeof import('~icons/mdi/close')['default']
+    'IMdi:github': typeof import('~icons/mdi/github')['default']
     'IMdi:plus': typeof import('~icons/mdi/plus')['default']
     IPhDotsSixBold: typeof import('~icons/ph/dots-six-bold')['default']
     Modal: typeof import('./src/components/Modal.vue')['default']
