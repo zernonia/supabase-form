@@ -22,3 +22,8 @@ const { isFetching, data } = useFetch<{ config: Config }>("/api/form/get", {
     <div v-else>No form is found</div>
   </div>
 </template>
+
+<route lang="yaml">
+meta:
+  layout: blank
+</route>
