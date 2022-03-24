@@ -11,7 +11,7 @@ export interface Column {
 
 export interface Table {
   title: string
-  columns?: Column[]
+  columns: Column[]
 }
 
 export interface TableState {
@@ -55,10 +55,11 @@ export interface Projects {
 export interface Forms {
   id: number /* primary key */
   slug?: string
-  config?: any // type unknown;
+  config: Config
   created_at?: string
   user_id?: string /* foreign key to users.id */
   project_id?: string /* foreign key to projects.id */
   users?: Users
   projects?: Projects
+  table_name: string
 }

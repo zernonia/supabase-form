@@ -1,34 +1,22 @@
 <script setup lang="ts">
-import { ref, watch } from "vue"
-import { Column, Config, ConfigColumn, TableState, Table, Projects, Forms } from "@/interface"
-import { formatTitle, applyDrag } from "@/utils"
+import { ref } from "vue"
+import { Column, Config, ConfigColumn, Forms } from "@/interface"
+import { formatTitle, applyDrag, formatDefinitions } from "@/utils"
 //@ts-ignore
 import { Container, Draggable } from "vue-dndrop"
-import { useRoute, useRouter } from "vue-router"
+import { useRoute } from "vue-router"
 import { supabase } from "@/plugins/supabase"
-import { store } from "@/store"
 
 const route = useRoute()
-const router = useRouter()
 
-const supabaseInfo = ref({
-  url: "",
-  anon_key: "",
-  jwt_token: "",
-})
-
+const formId = ref(-1)
 const config = ref<Config>({
   title: "",
   logo: "https://www.madewithsupabase.com/_nuxt/logo.fbcda856.svg",
   column: [],
 })
 
-const tables = ref<TableState>()
-const selectedTable = ref<Table>()
 const availableColumn = ref<Column[]>([])
-const projects = ref<Projects[]>([])
-const selectedProject = ref<Projects>()
-
 const isPreviewing = ref(false)
 
 const onDrop = (ref: "configColumn" | "availableColumn", dropResult: any) => {
@@ -41,21 +29,27 @@ const onDrop = (ref: "configColumn" | "availableColumn", dropResult: any) => {
 }
 
 const save = async () => {
-  const slug = Math.random().toString(36).substring(2, 10)
   const { data, error } = await supabase
     .from<Forms>("forms")
-    .insert({ config: config.value, slug, user_id: store.user?.id, project_id: selectedProject.value?.id })
+    .update({ config: config.value })
+    .eq("id", formId.value)
     .single()
-
-  if (data) {
-    router.replace(`/app/${data.slug}`)
-  }
 }
 
 const fetchData = async () => {
-  const { data, error } = await supabase.from<Forms>("forms").select("*").eq("slug", route.params.slug).single()
+  const { data, error } = await supabase
+    .from<Forms>("forms")
+    .select("*, projects(*)")
+    .eq("slug", route.params.slug.toString())
+    .single()
 
-  if (data) config.value = data.config
+  if (data) {
+    formId.value = data.id
+    config.value = data.config
+    const table = formatDefinitions(data.projects?.definitions)[data.table_name]
+    console.log(table.columns, data.config.column)
+    availableColumn.value = table.columns?.filter((i) => !data.config.column.some((j) => j.reference.title == i.title))
+  }
 }
 
 fetchData()
