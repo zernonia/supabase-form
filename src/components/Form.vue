@@ -55,13 +55,14 @@ watchOnce(
           </div>
         </div>
 
-        <button
+        <Button
           @click="emits('submit', formInput)"
           class="button ml-12 mt-16 self-start disabled:opacity-50"
           :disabled="isSubmitting"
+          :isLoading="isSubmitting"
         >
           Submit
-        </button>
+        </Button>
       </div>
 
       <div v-else class="px-12">
