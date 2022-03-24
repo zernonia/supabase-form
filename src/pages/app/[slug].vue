@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue"
-import { Column, Config, ConfigColumn, TableState, Table } from "@/interface"
-import { referenceFormat, referencePlaceholder } from "@/utils"
+import { Column, Config, ConfigColumn, TableState, Table, Projects } from "@/interface"
+import { formatDefinitions, formatTitle, applyDrag, addColumnToConfig } from "@/utils"
 //@ts-ignore
 import { Container, Draggable } from "vue-dndrop"
 import Form from "@/components/Form.vue"
