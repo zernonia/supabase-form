@@ -24,11 +24,11 @@ export const referenceFormat: { [key: string]: string } = {
 }
 
 export const referencePlaceholder: { [key: string]: string | boolean | number | Date | undefined } = {
-  uuid: "123e4567-e89b-12d3-a456-426614174000",
-  text: "Supabase is cool!",
-  char: "Supabase is cool!",
-  character: "Supabase is cool!",
-  varchar: "Supabase is cool!",
+  uuid: "",
+  text: "",
+  char: "",
+  character: "",
+  varchar: "",
   ARRAY: undefined,
   boolean: false,
   date: Date.now(),
@@ -36,7 +36,7 @@ export const referencePlaceholder: { [key: string]: string | boolean | number | 
   timestamp: Date.now(),
   timestamptz: Date.now(),
   interval: 0,
-  json: `{ "Supabase": "is cool!" }`,
+  json: "",
   smallint: 0,
   int: 0,
   integer: 0,
