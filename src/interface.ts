@@ -17,6 +17,9 @@ export interface Table {
 export interface TableState {
   [key: string]: Table
 }
+export interface FormInput {
+  [key: string]: string | number | boolean | Date | undefined
+}
 
 export interface ConfigColumn {
   // enabled: boolean
