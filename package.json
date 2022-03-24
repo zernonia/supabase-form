@@ -11,12 +11,14 @@
     "@formkit/vue": "^1.0.0-beta.5",
     "@supabase/supabase-js": "^1.31.1",
     "@vueuse/core": "^8.0.0",
+    "isomorphic-fetch": "^3.0.0",
     "vue": "^3.2.25",
     "vue-dndrop": "^1.2.2",
     "vue-router": "^4.0.14"
   },
   "devDependencies": {
     "@iconify/json": "^2.1.14",
+    "@types/isomorphic-fetch": "^0.0.36",
     "@types/node": "^17.0.21",
     "@vercel/node": "^1.13.0",
     "@vitejs/plugin-vue": "^2.2.0",
