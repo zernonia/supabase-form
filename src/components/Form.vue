@@ -1,11 +1,28 @@
 <script setup lang="ts">
-import { Config } from "@/interface"
-import { PropType, watch } from "vue"
+import { Config, FormInput } from "@/interface"
+import { PropType, ref, watch } from "vue"
+import { referencePlaceholder } from "@/utils"
+import { watchOnce } from "@vueuse/core"
 
 const props = defineProps({
   config: Object as PropType<Config>,
 })
-const emits = defineEmits(["submit"])
+
+const formInput = ref<FormInput>({})
+
+const emits = defineEmits<{
+  (e: "submit", value: FormInput): void
+}>()
+
+watchOnce(
+  () => props.config,
+  () => {
+    props.config?.column.forEach((i) => {
+      formInput.value[i.reference.title] = referencePlaceholder[i.inputType]
+    })
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -22,15 +39,20 @@ const emits = defineEmits(["submit"])
         <h2 class="h2">{{ cfg.title }} <span v-if="cfg.required">*</span></h2>
         <h3 v-if="cfg.description" class="description mb-2" v-html="cfg.description"></h3>
         <div class="mt-4">
-          <input class="input" v-if="cfg.inputType != 'select'" :type="cfg.inputType" v-model="cfg.placeholder" />
-          <select v-else class="input" v-model="cfg.placeholder">
+          <input
+            class="input"
+            v-if="cfg.inputType != 'select'"
+            :type="cfg.inputType"
+            v-model="formInput[cfg.reference.title]"
+          />
+          <select v-else class="input" v-model="formInput[cfg.reference.title]">
             <option disabled value="undefined">Please select one</option>
             <option v-for="opt in cfg.reference.enum" :value="opt">{{ opt }}</option>
           </select>
         </div>
       </div>
 
-      <button @click="emits('submit')" class="button ml-12 mt-16 self-start">Submit</button>
+      <button @click="emits('submit', formInput)" class="button ml-12 mt-16 self-start">Submit</button>
     </div>
   </div>
 </template>
