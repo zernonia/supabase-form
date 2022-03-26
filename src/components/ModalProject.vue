@@ -3,6 +3,7 @@ import { supabase } from "@/plugins/supabase"
 import { store } from "@/store"
 import { onMounted, PropType, ref } from "vue"
 import { Projects } from "@/interface"
+import { getNode } from "@formkit/core"
 
 const props = defineProps({
   isEditing: Boolean,
@@ -21,8 +22,12 @@ const supabaseInfo = ref({
   anon_key: "",
   jwt_token: "",
 })
-
+const clickSave = () => {
+  getNode("project-form")?.submit()
+}
 const fetchSchema = () => {
+  if (!supabaseInfo.value.anon_key || !supabaseInfo.value.url || !supabaseInfo.value.name) return
+
   isLoading.value = true
   fetch(`${supabaseInfo.value.url}/rest/v1/?apikey=${supabaseInfo.value.anon_key}`)
     .then((res) => res.json())
@@ -76,47 +81,55 @@ onMounted(() => {
 
 <template>
   <Modal v-if="isEditing" @close="!isLoading ? emits('close') : ''">
-    <div class="form max-w-96 w-full p-6 bg-gray-50 border rounded-xl">
-      <h2 class="text-3xl font-bold mb-4 capitalize">{{ type }} Project</h2>
-      <label class="label" for="supabase-name">Name</label>
-      <input
-        class="input"
-        name="supabase-name"
-        type="name"
-        placeholder="Label your project"
-        v-model="supabaseInfo.name"
-      />
+    <div class="max-w-96 w-full p-6 bg-gray-50 border rounded-xl">
+      <FormKit
+        id="project-form"
+        type="form"
+        v-model="supabaseInfo"
+        :actions="false"
+        :disabled="isLoading"
+        @submit="fetchSchema"
+      >
+        <h2 class="text-3xl font-bold mb-4 capitalize">{{ type }} Project</h2>
 
-      <label class="label" for="supabase-url">Url</label>
-      <input
-        class="input"
-        name="supabase-url"
-        type="url"
-        placeholder="https://xxx.supabase.co"
-        v-model="supabaseInfo.url"
-      />
+        <FormKit
+          name="name"
+          type="text"
+          placeholder="Label your project"
+          label="Name"
+          validation="required"
+          input-class="input"
+        ></FormKit>
 
-      <label class="label" for="supabase-key">Anon Key</label>
-      <input
-        class="input"
-        name="supabase-key"
-        type="text"
-        placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX..."
-        v-model="supabaseInfo.anon_key"
-      />
+        <FormKit
+          name="url"
+          type="text"
+          placeholder="https://xxx.supabase.co"
+          label="Url"
+          validation="required"
+          input-class="input"
+        ></FormKit>
 
-      <label class="label" for="supabase-jwt">JWT Secret (Optional)</label>
-      <input
-        class="input"
-        name="supabase-jwt"
-        type="text"
-        placeholder="xxxx-xxxx-xxxx-xxxx"
-        v-model="supabaseInfo.jwt_token"
-      />
+        <FormKit
+          name="anon_key"
+          type="text"
+          placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX..."
+          label="Anon Key"
+          validation="required"
+          input-class="input"
+        ></FormKit>
 
+        <FormKit
+          name="jwt_token"
+          type="text"
+          placeholder="xxxx-xxxx-xxxx-xxxx"
+          label="JWT Secret (Optional)"
+          input-class="input"
+        ></FormKit>
+      </FormKit>
       <div class="mt-4 flex space-x-2">
         <button class="button-white" @click="emits('close')" :disabled="isLoading">Cancel</button>
-        <Button class="button" @click="fetchSchema" :isLoading="isLoading">Save</Button>
+        <Button class="button" @click="clickSave" :isLoading="isLoading">Save</Button>
       </div>
     </div>
   </Modal>
