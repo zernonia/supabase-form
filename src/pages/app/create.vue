@@ -4,18 +4,12 @@ import { Column, Config, ConfigColumn, TableState, Table, Projects, Forms } from
 import { formatDefinitions, formatTitle, applyDrag, addColumnToConfig } from "@/utils"
 //@ts-ignore
 import { Container, Draggable } from "vue-dndrop"
-import { useRoute, useRouter } from "vue-router"
+import { useRouter } from "vue-router"
 import { supabase } from "@/plugins/supabase"
 import { store } from "@/store"
+import ModalProject from "@/components/ModalProject.vue"
 
-const route = useRoute()
 const router = useRouter()
-
-const supabaseInfo = ref({
-  url: "",
-  anon_key: "",
-  jwt_token: "",
-})
 
 const config = ref<Config>({
   title: "",
@@ -30,27 +24,12 @@ const projects = ref<Projects[]>([])
 const selectedProject = ref<Projects>()
 
 const isPreviewing = ref(false)
-const isEditing = ref(false)
 
-const fetchSchema = () => {
-  fetch(`${supabaseInfo.value.url}/rest/v1/?apikey=${supabaseInfo.value.anon_key}`)
-    .then((res) => res.json())
-    .then((res) => {
-      const { definitions, paths } = res
-      insertProject({ definitions, paths })
-      tables.value = formatDefinitions({ definitions, paths })
-    })
-}
-
-const insertProject = async (definitions: Projects["definitions"]) => {
-  const { data, error } = await supabase.from<Projects>("projects").upsert({
-    user_id: store.user?.id,
-    url: supabaseInfo.value.url,
-    anon_key: supabaseInfo.value.anon_key,
-    definitions,
-  })
-  console.log({ data })
-}
+const modalProjectProps = ref({
+  isEditing: false,
+  type: "add",
+  defaultValue: undefined as Projects | null | undefined,
+})
 
 const fetchProjects = async () => {
   const { data, error } = await supabase.from<Projects>("projects").select("*")
@@ -64,6 +43,12 @@ const selectTable = () => {
   config.value.title = formatTitle(selectedTable.value.title)
   config.value.column = selectedTable.value.columns.filter((i) => i.required).map((i) => addColumnToConfig(i))
   availableColumn.value = selectedTable.value.columns.filter((i) => !i.required)
+}
+
+const submitModalProject = async (project: Projects) => {
+  await fetchProjects()
+  selectedProject.value = project
+  modalProjectProps.value.isEditing = false
 }
 
 const onDrop = (ref: "configColumn" | "availableColumn", dropResult: any) => {
@@ -102,40 +87,51 @@ fetchProjects()
 
 <template>
   <div class="flex flex-col">
-    <div class="flex items-center">
-      <Modal v-if="isEditing" @close="isEditing = false">
-        <div class="max-w-72 p-4 bg-gray-50 border rounded-xl">
-          <label class="label" for="supabase-url">Url</label>
-          <input class="input" name="supabase-url" type="url" v-model="supabaseInfo.url" />
+    <div class="flex items-center justify-between py-2">
+      <div class="flex items-center">
+        <ModalProject
+          v-if="modalProjectProps.isEditing"
+          v-bind="modalProjectProps"
+          @close="modalProjectProps.isEditing = false"
+          @submit="submitModalProject"
+        ></ModalProject>
 
-          <label class="label" for="supabase-key">Anon</label>
-          <input class="input" name="supabase-key" type="text" v-model="supabaseInfo.anon_key" />
+        <select class="input w-72 w-full" v-model="selectedProject" @change="selectTable">
+          <option disabled value="undefined">Select a Project</option>
+          <option v-for="project in projects" :value="project">
+            {{ project.name }}
+          </option>
+        </select>
 
-          <label class="label" for="supabase-jwt">JWT Token</label>
-          <input class="input" name="supabase-jwt" type="text" v-model="supabaseInfo.jwt_token" />
+        <button class="button" @click=";(modalProjectProps.isEditing = true), (modalProjectProps.type = 'add')">
+          +
+        </button>
 
-          <button class="button" @click="fetchSchema">Fetch</button>
-        </div>
-      </Modal>
+        <button
+          v-if="selectedProject"
+          class="button"
+          @click="
+            ;(modalProjectProps.isEditing = true),
+              (modalProjectProps.type = 'edit'),
+              (modalProjectProps.defaultValue = selectedProject)
+          "
+        >
+          Edit
+        </button>
 
-      <select class="input max-w-72" v-model="selectedProject" @change="selectTable">
-        <option disabled value="undefined">Please select one</option>
-        <option v-for="project in projects" :value="project">
-          {{ project.id }}
-        </option>
-      </select>
+        <select class="ml-2 input w-72 w-full" v-model="selectedTable" @change="selectTable">
+          <option disabled value="undefined">Select a Table</option>
+          <option v-for="table in tables" :value="table">
+            {{ table.title }}
+          </option>
+        </select>
+      </div>
 
-      <select class="input max-w-72" v-model="selectedTable" @change="selectTable">
-        <option disabled value="undefined">Please select one</option>
-        <option v-for="table in tables" :value="table">
-          {{ table.title }}
-        </option>
-      </select>
-
-      <button class="button" @click="isPreviewing = true">Preview</button>
-      <button class="button bg-green-600" @click="save">Save</button>
+      <div class="flex space-x-2">
+        <button class="button" @click="isPreviewing = true">Preview</button>
+        <button class="button bg-green-600" @click="save">Save</button>
+      </div>
     </div>
-    <hr />
 
     <div class="flex mt-4">
       <div class="border rounded-xl bg-gray-50 w-full max-w-72 h-max p-4 mr-4 flex-shrink-0">
@@ -185,7 +181,7 @@ fetchProjects()
           >
             <template v-if="config.column.length">
               <Draggable v-for="(item, i) in config.column" :key="item.reference.title + i">
-                <div class="relative config px-12 py-4 bg-gray-50 hover:bg-gray-100 transition w-full rounded-lg">
+                <div class="form relative config px-12 py-4 bg-gray-50 hover:bg-gray-100 transition w-full rounded-lg">
                   <span
                     class="column-drag-handle absolute cursor-move top-0 left-1/2 transform -translate-x-1/2 text-gray-400"
                     ><i-ph-dots-six-bold></i-ph-dots-six-bold
