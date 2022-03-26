@@ -94,19 +94,21 @@ export const formatTitle = (str: string) => {
   return frags.join(" ")
 }
 
-export const addColumnToConfig = (col: Column) => {
+export const addColumnToConfig = (col: ConfigColumn) => {
   return {
     reference: col,
     // enabled: !col.default?.length,
     required: col.required,
     title: formatTitle(col.title),
-    inputType: referenceFormat[col.format],
+    description: col.description,
+    inputType: referenceFormat[col.inputType],
     // placeholder: referencePlaceholder[col.format],
   }
 }
 
 export const applyDrag = (ref: "configColumn" | "availableColumn", arr: ConfigColumn[] | Column[], dragResult: any) => {
   const { removedIndex, addedIndex, payload } = dragResult
+  console.log({ payload })
   if (removedIndex === null && addedIndex === null) return arr
 
   const result = [...arr]
