@@ -5,25 +5,26 @@ const props = defineProps({
   modelValue: String,
   placeholder: String,
 })
-const emits = defineEmits(["update:modelValue", "selected"])
+
+const emits = defineEmits<{
+  (e: "update:modelValue", value: string): void
+  (e: "selected", value: File): void
+}>()
 
 const target = ref<HTMLInputElement>()
 
 const pickFile = (e: any) => {
   let files = target.value?.files as FileList
   if (files.length) {
-    for (let i = 0; i < files.length; i++) {
-      let reader = new FileReader()
-      reader.onload = async (e) => {
-        const result = e.target?.result as string
-        let r = (Math.random() + 1).toString(36).substring(7)
-        console.log({ result })
+    let file = files[0]
+    emits("selected", file)
 
-        emits("update:modelValue", result)
-        emits("selected", result)
-      }
-      reader.readAsDataURL(files[i])
+    let reader = new FileReader()
+    reader.onload = async (e) => {
+      const result = e.target?.result as string
+      emits("update:modelValue", result)
     }
+    reader.readAsDataURL(files[0])
   }
 }
 </script>

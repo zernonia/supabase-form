@@ -6,6 +6,7 @@ import { formatTitle, applyDrag, formatDefinitions } from "@/utils"
 import { Container, Draggable } from "vue-dndrop"
 import { useRoute } from "vue-router"
 import { supabase } from "@/plugins/supabase"
+import { store } from "@/store"
 
 const route = useRoute()
 
@@ -39,6 +40,23 @@ const save = async () => {
     .single()
 
   isSaving.value = false
+}
+
+const uploadLogo = async (file: File) => {
+  try {
+    let r = (Math.random() + 1).toString(36).substring(7)
+    const { data, error } = await supabase.storage.from("logo").upload(`public/${store.user?.id}-${r}`, file, {
+      cacheControl: "3600",
+      upsert: false,
+    })
+    if (error) throw new Error(error.message)
+    if (data) {
+      const { publicURL } = supabase.storage.from("logo").getPublicUrl(data?.Key.split("logo/")[1])
+      if (publicURL) config.value.logo = publicURL
+    }
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 const fetchData = async () => {
@@ -91,8 +109,8 @@ fetchData()
       <div class="relative w-full flex justify-center bg-gray-50 rounded-xl overflow-hidden border">
         <div class="absolute w-full h-64 inset-0 bg-green-400 z-0"></div>
         <div class="my-20 w-full max-w-screen-sm flex flex-col items-center z-10">
-          <div class="w-full my-12 p-12 bg-white">
-            <Upload v-model="config.logo"></Upload>
+          <div class="w-full my-12 p-12 bg-white rounded-2xl border">
+            <Upload v-model="config.logo" @selected="uploadLogo"></Upload>
             <Editable
               v-model="config.title"
               class="h1 mb-2 outline-none"
