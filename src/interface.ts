@@ -53,6 +53,7 @@ export interface Projects {
   created_at?: string
   definitions?: any // type unknown;
   users?: Users
+  name: string
 }
 
 export interface Forms {
