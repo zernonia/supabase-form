@@ -30,9 +30,11 @@ watchOnce(
 <template>
   <div class="relative w-full flex flex-col items-center">
     <div class="absolute w-full h-64 inset-0 bg-green-400 z-0"></div>
-    <div v-if="config" class="mt-20 w-full max-w-screen-md z-10">
-      <div class="w-full my-12 p-12 bg-white rounded-2xl border">
-        <img v-if="config.logo" :src="config.logo" alt="" class="w-40 h-40 mb-4" />
+    <div v-if="config" class="mt-20 w-full max-w-screen-md px-4 md:px-6 z-10">
+      <div class="w-full my-12 p-8 md:p-12 bg-white rounded-2xl border">
+        <div class="w-40 h-40 mb-4">
+          <img v-if="config.logo" :src="config.logo" alt="" />
+        </div>
         <div class="h1 mb-2 outline-none" v-html="config.title"></div>
         <div class="subtitle mb-4 outline-none" v-html="config.description"></div>
       </div>
