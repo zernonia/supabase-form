@@ -94,16 +94,16 @@ export const formatTitle = (str: string) => {
   return frags.join(" ")
 }
 
-export const addColumnToConfig = (col: ConfigColumn) => {
+export const addColumnToConfig = (col: ConfigColumn | Column): ConfigColumn => {
   return {
     reference: col,
     // enabled: !col.default?.length,
     required: col.required,
     title: formatTitle(col.title),
-    description: col.description,
-    inputType: referenceFormat[col.inputType],
+    description: (col as ConfigColumn).description ?? undefined,
+    inputType: referenceFormat[(col as ConfigColumn).inputType] ?? "",
     // placeholder: referencePlaceholder[col.format],
-  }
+  } as ConfigColumn
 }
 
 export const applyDrag = (ref: "configColumn" | "availableColumn", arr: ConfigColumn[] | Column[], dragResult: any) => {
