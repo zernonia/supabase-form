@@ -15,6 +15,7 @@ declare module 'vue' {
     'IMdi:plus': typeof import('~icons/mdi/plus')['default']
     IPhDotsSixBold: typeof import('~icons/ph/dots-six-bold')['default']
     Modal: typeof import('./src/components/Modal.vue')['default']
+    ModalProject: typeof import('./src/components/ModalProject.vue')['default']
     Preview: typeof import('./src/components/Preview.vue')['default']
     Toggle: typeof import('./src/components/Toggle.vue')['default']
     Upload: typeof import('./src/components/Upload.vue')['default']
