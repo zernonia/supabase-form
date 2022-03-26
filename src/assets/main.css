@@ -17,10 +17,16 @@ input {
   @apply block mb-1 text-sm font-medium text-gray-900 dark:text-gray-300;
 }
 .input {
-  @apply block w-full px-3 py-2.5 mb-2 bg-white border border-gray-300 text-gray-900 rounded-lg outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500;
+  @apply block w-full px-3 py-2.5 bg-white border border-gray-300 text-gray-900 rounded-lg outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500;
+}
+.form .input {
+  @apply mb-2;
 }
 .button {
   @apply text-white inline-flex items-center bg-green-400 outline-none hover:bg-green-500 focus:ring-2 focus:ring-green-500 font-medium rounded-lg px-5 py-2 text-center  dark:bg-green-600 dark:hover:bg-green-400 dark:focus:ring-green-500;
+}
+.button-white {
+  @apply text-green-400 inline-flex items-center bg-white outline-none hover:bg-light-100 focus:ring-2 focus:ring-green-500 font-medium rounded-lg px-5 py-2 text-center  dark:bg-green-600 dark:hover:bg-green-400 dark:focus:ring-green-500;
 }
 .h1 {
   @apply text-4xl font-medium;

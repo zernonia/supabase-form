@@ -41,7 +41,7 @@ watchOnce(
         <div class="mb-12 px-12" v-for="cfg in config.column">
           <h2 class="h2">{{ cfg.title }} <span v-if="cfg.required">*</span></h2>
           <h3 v-if="cfg.description" class="description mb-2" v-html="cfg.description"></h3>
-          <div class="mt-4">
+          <div class="form mt-4">
             <input
               class="input"
               v-if="cfg.inputType != 'select'"
