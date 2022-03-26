@@ -9,6 +9,8 @@ import { supabase } from "@/plugins/supabase"
 
 const route = useRoute()
 
+const isFetching = ref(false)
+const isSaving = ref(false)
 const formId = ref(-1)
 const config = ref<Config>({
   title: "",
@@ -29,14 +31,18 @@ const onDrop = (ref: "configColumn" | "availableColumn", dropResult: any) => {
 }
 
 const save = async () => {
+  isSaving.value = true
   const { data, error } = await supabase
     .from<Forms>("forms")
     .update({ config: config.value })
     .eq("id", formId.value)
     .single()
+
+  isSaving.value = false
 }
 
 const fetchData = async () => {
+  isFetching.value = true
   const { data, error } = await supabase
     .from<Forms>("forms")
     .select("*, projects(*)")
@@ -50,6 +56,8 @@ const fetchData = async () => {
     console.log(table.columns, data.config.column)
     availableColumn.value = table.columns?.filter((i) => !data.config.column.some((j) => j.reference.title == i.title))
   }
+
+  isFetching.value = false
 }
 
 fetchData()
@@ -57,14 +65,16 @@ fetchData()
 
 <template>
   <div class="flex flex-col">
-    <div class="flex">
-      <button class="button" @click="isPreviewing = true">Preview</button>
-      <button class="button bg-green-600" @click="save">Save</button>
+    <div class="flex justify-end space-x-2">
+      <button class="button" @click="isPreviewing = true" :disabled="isFetching">Preview</button>
+      <Button class="button bg-green-600" @click="save" :isLoading="isSaving" :disabled="isFetching || isSaving"
+        >Save</Button
+      >
     </div>
-    <hr />
 
-    <div class="flex mt-4">
+    <div v-if="!isFetching" class="flex mt-4">
       <div class="border rounded-xl bg-gray-50 w-full max-w-72 h-max p-4 mr-4 flex-shrink-0">
+        <h3 class="text-gray-400">Available Column</h3>
         <Container
           group-name="1"
           @drop="onDrop('availableColumn', $event)"
@@ -78,7 +88,7 @@ fetchData()
         </Container>
       </div>
 
-      <div class="relative w-full flex justify-center bg-gray-50">
+      <div class="relative w-full flex justify-center bg-gray-50 rounded-xl overflow-hidden border">
         <div class="absolute w-full h-64 inset-0 bg-green-400 z-0"></div>
         <div class="my-20 w-full max-w-screen-sm flex flex-col items-center z-10">
           <div class="w-full my-12 p-12 bg-white">
@@ -155,6 +165,10 @@ fetchData()
         </div>
       </div>
     </div>
+    <div v-else class="flex items-start justify-center my-20">
+      <i-eos-icons-bubble-loading class="text-4xl"></i-eos-icons-bubble-loading>
+    </div>
+
     <Preview v-if="isPreviewing" @close="isPreviewing = false">
       <Form :config="config"></Form>
     </Preview>
