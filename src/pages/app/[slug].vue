@@ -108,7 +108,7 @@ fetchData()
 
       <div class="relative w-full flex justify-center bg-gray-50 rounded-xl overflow-hidden border">
         <div class="absolute w-full h-64 inset-0 bg-green-400 z-0"></div>
-        <div class="my-20 w-full max-w-screen-sm flex flex-col items-center z-10">
+        <div class="my-20 w-full max-w-screen-sm px-4 md:px-6 flex flex-col items-center z-10">
           <div class="w-full my-12 p-12 bg-white rounded-2xl border">
             <Upload v-model="config.logo" @selected="uploadLogo"></Upload>
             <Editable
