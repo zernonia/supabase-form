@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue"
+import { computed, ref, watch } from "vue"
 import { Column, Config, TableState, Table, Projects, Forms } from "@/interface"
 import { formatDefinitions, formatTitle, addColumnToConfig } from "@/utils"
 import { useRouter } from "vue-router"
@@ -28,6 +28,8 @@ const modalProjectProps = ref({
   type: "add",
   defaultValue: undefined as Projects | null | undefined,
 })
+
+const allowToSave = computed(() => config.value.title && config.value.column.length)
 
 const fetchProjects = async () => {
   const { data, error } = await supabase.from<Projects>("projects").select("*")
@@ -98,7 +100,7 @@ fetchProjects()
 
         <button
           v-if="selectedProject"
-          class="button"
+          class="button ml-1"
           @click="
             ;(modalProjectProps.isEditing = true),
               (modalProjectProps.type = 'edit'),
@@ -118,7 +120,7 @@ fetchProjects()
 
       <div class="flex space-x-2">
         <button class="button" @click="isPreviewing = true">Preview</button>
-        <button class="button bg-green-600" @click="save">Save</button>
+        <button class="button bg-green-600" @click="save" :disabled="!allowToSave">Save</button>
       </div>
     </div>
 
