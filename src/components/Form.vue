@@ -69,12 +69,12 @@ watchOnce(
 
       <div v-else class="px-12">
         <h1 class="text-3xl">Thank you for your submission 💚</h1>
-        <a
+        <!-- <a
           href="https://github.com/zernonia/supabase-form"
           target="_blank"
           class="description text-lg flex items-center mt-6"
           >> Star on <i-mdi:github class="ml-2"></i-mdi:github
-        ></a>
+        ></a> -->
       </div>
     </div>
   </div>
