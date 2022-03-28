@@ -7,6 +7,7 @@ declare module 'vue' {
     Button: typeof import('./src/components/Button.vue')['default']
     Editable: typeof import('./src/components/Editable.vue')['default']
     Form: typeof import('./src/components/Form.vue')['default']
+    FormEditing: typeof import('./src/components/FormEditing.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     IEosIconsBubbleLoading: typeof import('~icons/eos-icons/bubble-loading')['default']
     IFluentReOrderDotsHorizontal16Filled: typeof import("~icons/fluent/re-order-dots-horizontal16-filled")["default"]
