@@ -57,7 +57,7 @@ watch(
 
 <template>
   <div class="flex flex-col lg:flex-row mt-4">
-    <div class="border rounded-xl bg-gray-50 w-full max-w-72 h-max p-4 mr-4 flex-shrink-0">
+    <div class="border rounded-xl bg-gray-50 w-full max-w-72 h-max p-4 mr-4 flex-shrink-0 sticky top-4">
       <h2 class="text-gray-400">Available Column</h2>
       <Container
         group-name="1"
@@ -69,6 +69,7 @@ watch(
             {{ formatTitle(item.title) }}
           </div>
         </Draggable>
+        <div class="h-32"></div>
       </Container>
     </div>
 
