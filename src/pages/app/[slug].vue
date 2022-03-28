@@ -3,6 +3,7 @@ import { ref } from "vue"
 import { Column, Config, Forms, Projects } from "@/interface"
 import { formatDefinitions } from "@/utils"
 import { useRoute } from "vue-router"
+import { useClipboard } from "@vueuse/core"
 import { supabase } from "@/plugins/supabase"
 
 const route = useRoute()
@@ -24,6 +25,7 @@ const modalProjectProps = ref({
   defaultValue: undefined as Projects | null | undefined,
 })
 
+const { copy } = useClipboard({ source: `https://supaform.com/form/${route.params.slug}` })
 const save = async () => {
   isSaving.value = true
   const { data, error } = await supabase
@@ -62,6 +64,7 @@ fetchData()
     <div class="flex justify-between py-2">
       <button class="button" :disabled="isFetching" @click="modalProjectProps.isEditing = true">Edit Project</button>
       <div class="flex space-x-2">
+        <button class="button" @click="copy()">Share</button>
         <button class="button" @click="isPreviewing = true" :disabled="isFetching">Preview</button>
         <Button class="button bg-green-600" @click="save" :isLoading="isSaving" :disabled="isFetching || isSaving"
           >Save</Button
