@@ -39,13 +39,12 @@ const submitForm = async (form: FormInput) => {
     <div class="self-center justify-self-center text-center w-full text-4xl" v-if="isFetching">
       Loading <i-eos-icons-bubble-loading class="text-2xl"></i-eos-icons-bubble-loading>
     </div>
-    <Form
-      v-else-if="data?.config"
-      :config="data.config"
-      @submit="submitForm"
-      :isSuccessful="isSuccessful"
-      :isSubmitting="isSubmitting"
-    ></Form>
+    <div v-else-if="data?.config" class="w-full">
+      <Form :config="data.config" @submit="submitForm" :isSuccessful="isSuccessful" :isSubmitting="isSubmitting"></Form>
+      <p class="max-w-screen-md px-18 mt-18 mb-4 mx-auto text-gray-300">
+        Powered by <a href="https://supaform.com"> Supaform</a>
+      </p>
+    </div>
     <div v-else class="self-center justify-self-center text-center w-full text-4xl">No form is found 😢</div>
   </div>
 </template>
