@@ -56,8 +56,9 @@ watch(
 </script>
 
 <template>
-  <div class="flex mt-4">
+  <div class="flex flex-col lg:flex-row mt-4">
     <div class="border rounded-xl bg-gray-50 w-full max-w-72 h-max p-4 mr-4 flex-shrink-0">
+      <h2 class="text-gray-400">Available Column</h2>
       <Container
         group-name="1"
         @drop="onDrop('availableColumn', $event)"
@@ -71,7 +72,7 @@ watch(
       </Container>
     </div>
 
-    <div class="relative w-full flex justify-center bg-gray-50">
+    <div class="relative w-full flex justify-center bg-gray-50 rounded-xl overflow-hidden">
       <div class="absolute w-full h-64 inset-0 bg-green-400 z-0"></div>
       <div class="my-20 w-full max-w-screen-sm px-4 md:px-6 flex flex-col items-center z-10">
         <div class="w-full my-12 p-12 bg-white rounded-2xl border">

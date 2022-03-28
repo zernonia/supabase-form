@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue"
-import { Column, Config, ConfigColumn, Forms } from "@/interface"
-import { formatTitle, applyDrag, formatDefinitions } from "@/utils"
-//@ts-ignore
-import { Container, Draggable } from "vue-dndrop"
+import { Column, Config, Forms } from "@/interface"
+import { formatDefinitions } from "@/utils"
 import { useRoute } from "vue-router"
 import { supabase } from "@/plugins/supabase"
-import { store } from "@/store"
 
 const route = useRoute()
 

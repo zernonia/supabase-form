@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue"
-import { Column, Config, ConfigColumn, TableState, Table, Projects, Forms } from "@/interface"
-import { formatDefinitions, formatTitle, applyDrag, addColumnToConfig } from "@/utils"
+import { Column, Config, TableState, Table, Projects, Forms } from "@/interface"
+import { formatDefinitions, formatTitle, addColumnToConfig } from "@/utils"
 import { useRouter } from "vue-router"
 import { supabase } from "@/plugins/supabase"
 import { store } from "@/store"
