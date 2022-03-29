@@ -28,6 +28,24 @@ input {
 .formkit-messages {
   @apply text-sm text-red-500;
 }
+.form-schema {
+  @apply mb-12 px-12;
+
+  & h2 {
+    @apply !text-2xl font-medium block mb-1 text-sm font-medium text-gray-900 dark:text-gray-300;
+  }
+  & p {
+    @apply text-gray-400 mb-4;
+  }
+  & input,
+  select {
+    @apply block w-full px-3 py-2.5 bg-white border border-gray-300 text-gray-900 rounded-lg outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500;
+  }
+  & label {
+    @apply hidden;
+  }
+}
+
 .button {
   @apply text-white inline-flex items-center bg-green-400 outline-none hover:bg-green-500 focus:ring-2 focus:ring-green-500 font-medium rounded-lg px-5 py-2 text-center  dark:bg-green-600 dark:hover:bg-green-400 dark:focus:ring-green-500 disabled:cursor-not-allowed disabled:opacity-50;
 }
