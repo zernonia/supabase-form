@@ -56,7 +56,13 @@ const save = async () => {
 
   const { data, error } = await supabase
     .from<Forms>("forms")
-    .insert({ config: config.value, slug, user_id: store.user?.id, project_id: selectedProject.value?.id })
+    .insert({
+      config: config.value,
+      slug,
+      user_id: store.user?.id,
+      project_id: selectedProject.value?.id,
+      table_name: selectedTable.value?.title,
+    })
     .single()
 
   if (data) {
