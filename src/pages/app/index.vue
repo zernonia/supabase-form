@@ -29,7 +29,7 @@ fetchForms()
         <router-link class="button" to="/app/create">Add form</router-link>
       </div>
 
-      <ul v-if="store.forms.length" class="flex items-center mt-4">
+      <ul v-if="store.forms.length" class="grid grid-cols-3 gap-4 mt-4">
         <template v-for="form in store.forms">
           <router-link :to="`/app/${form.slug}`" class="p-12 bg-gray-100 hover:bg-gray-200 transition mr-2 rounded-xl">
             <h2 class="text-2xl font-bold">{{ form.config.title }}</h2>
