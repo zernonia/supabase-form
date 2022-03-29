@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Config, FormInput } from "@/interface"
-import { PropType, ref, watch } from "vue"
+import { computed, PropType, ref } from "vue"
 import { referencePlaceholder } from "@/utils"
 import { watchOnce } from "@vueuse/core"
+import { getNode } from "@formkit/core"
 
 const props = defineProps({
   config: Object as PropType<Config>,
@@ -16,15 +17,55 @@ const emits = defineEmits<{
   (e: "submit", value: FormInput): void
 }>()
 
+const schema = computed<any>(() => {
+  return props.config?.column
+    .map((cfg) => {
+      console.log({ cfg })
+      return [
+        {
+          $el: "h2",
+          children: cfg.title,
+        },
+        {
+          $el: "p",
+          children: cfg.description,
+        },
+        {
+          $formkit: cfg.inputType,
+          name: cfg.reference.title,
+          label: cfg.title,
+          validation: cfg.required ? "required" : undefined,
+          options:
+            cfg.inputType == "select"
+              ? cfg.reference.enum
+                ? [
+                    { label: "Please select one", value: undefined, attrs: { disabled: true } },
+                    ...cfg.reference.enum?.map((i) => ({ label: i, value: i })),
+                  ]
+                : undefined
+              : undefined,
+        },
+      ]
+    })
+    ?.flat()
+})
+
 watchOnce(
   () => props.config,
   () => {
     props.config?.column.forEach((i) => {
-      formInput.value[i.reference.title] = referencePlaceholder[i.inputType]
+      formInput.value[i.reference.title] = referencePlaceholder[i.inputType] ?? undefined
     })
   },
   { immediate: true }
 )
+
+const clickButton = () => {
+  getNode("app-form")?.submit()
+}
+const submitForm = () => {
+  emits("submit", formInput.value)
+}
 </script>
 
 <template>
@@ -39,42 +80,29 @@ watchOnce(
         <div class="subtitle mb-4 outline-none" v-html="config.description"></div>
       </div>
 
-      <div v-if="!isSuccessful">
-        <div class="mb-12 px-12" v-for="cfg in config.column">
-          <h2 class="h2">{{ cfg.title }} <span v-if="cfg.required">*</span></h2>
-          <h3 v-if="cfg.description" class="description mb-2" v-html="cfg.description"></h3>
-          <div class="form mt-4">
-            <input
-              class="input"
-              v-if="cfg.inputType != 'select'"
-              :type="cfg.inputType"
-              v-model="formInput[cfg.reference.title]"
-            />
-            <select v-else class="input" v-model="formInput[cfg.reference.title]">
-              <option disabled value="undefined">Please select one</option>
-              <option v-for="opt in cfg.reference.enum" :value="opt">{{ opt }}</option>
-            </select>
-          </div>
-        </div>
+      <FormKit
+        v-if="!isSuccessful && schema"
+        type="form"
+        id="app-form"
+        v-model="formInput"
+        :actions="false"
+        formClass="form-schema"
+        @submit="submitForm"
+      >
+        <FormKitSchema :schema="schema" />
 
         <Button
-          @click="emits('submit', formInput)"
-          class="button ml-12 mt-16 self-start disabled:opacity-50"
+          @click="clickButton"
+          class="button mt-16 self-start disabled:opacity-50"
           :disabled="isSubmitting"
           :isLoading="isSubmitting"
         >
           Submit
         </Button>
-      </div>
+      </FormKit>
 
       <div v-else class="px-12">
         <h1 class="text-3xl">Thank you for your submission 💚</h1>
-        <!-- <a
-          href="https://github.com/zernonia/supabase-form"
-          target="_blank"
-          class="description text-lg flex items-center mt-6"
-          >> Star on <i-mdi:github class="ml-2"></i-mdi:github
-        ></a> -->
       </div>
     </div>
   </div>
