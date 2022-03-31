@@ -13,13 +13,15 @@ export const referenceFormat: { [key: string]: string } = {
   timestamp: "datetime-local",
   timestamptz: "datetime-local",
   interval: "number",
-  json: "json",
+  json: "textarea",
   smallint: "number",
   int: "number",
   integer: "number",
   bigint: "number",
   float: "number",
   float8: "number",
+  double: "number",
+  numeric: "number",
   enum: "select",
 }
 
@@ -101,7 +103,7 @@ export const addColumnToConfig = (col: ConfigColumn | Column): ConfigColumn => {
     required: col.required,
     title: formatTitle(col.title),
     description: (col as ConfigColumn).description ?? undefined,
-    inputType: referenceFormat[(col as ConfigColumn).inputType] ?? "",
+    inputType: (col as ConfigColumn).inputType ?? referenceFormat[(col as Column).format] ?? "",
     // placeholder: referencePlaceholder[col.format],
   } as ConfigColumn
 }
