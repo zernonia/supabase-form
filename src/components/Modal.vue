@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from "vue"
+import { onMounted, onUnmounted, watch } from "vue"
 import { useMagicKeys } from "@vueuse/core"
 
 const emits = defineEmits(["close"])
@@ -7,6 +7,13 @@ const emits = defineEmits(["close"])
 const { escape } = useMagicKeys()
 watch(escape, (v) => {
   if (v) emits("close")
+})
+
+onMounted(() => {
+  document.body.style.overflow = "hidden"
+})
+onUnmounted(() => {
+  document.body.style.overflow = "auto"
 })
 </script>
 
