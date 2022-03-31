@@ -125,16 +125,7 @@ watch(
                     data-placeholder="Write some description (optional)"
                     autocomplete="off"
                   ></Editable>
-                  <input
-                    class="input"
-                    v-if="item.inputType != 'select'"
-                    :type="item.inputType"
-                    v-model="item.placeholder"
-                  />
-                  <select v-else class="input" v-model="item.placeholder">
-                    <option disabled value="undefined">Please select one</option>
-                    <option v-for="opt in item.reference.enum" :value="opt">{{ opt }}</option>
-                  </select>
+                  <FormInput :item="item" v-model="item.placeholder"></FormInput>
                 </div>
 
                 <div class="mt-4">
