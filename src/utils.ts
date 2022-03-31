@@ -48,6 +48,18 @@ export const referencePlaceholder: { [key: string]: string | boolean | number | 
   enum: undefined,
 }
 
+export const referenceInputDefaultValue: { [key: string]: string | boolean | number | Date | undefined } = {
+  text: undefined,
+  textarea: undefined,
+  number: undefined,
+  checkbox: false,
+  date: Date.now(),
+  "datetime-local": Date.now(),
+  time: Date.now(),
+  timestamp: Date.now(),
+  timestamptz: Date.now(),
+}
+
 export const formatDefinitions = (def: Projects["definitions"]) => {
   const { definitions, paths } = def
   let tableGroup: TableState = {}
