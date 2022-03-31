@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { Config, FormInput } from "@/interface"
 import { computed, PropType, ref } from "vue"
-import { referencePlaceholder } from "@/utils"
-import { watchOnce } from "@vueuse/core"
 import { getNode } from "@formkit/core"
+import { FormKitOptionsList } from "@formkit/inputs"
 
 const props = defineProps({
   config: Object as PropType<Config>,
@@ -17,48 +16,16 @@ const emits = defineEmits<{
   (e: "submit", value: FormInput): void
 }>()
 
-const schema = computed<any>(() => {
-  return props.config?.column
-    .map((cfg) => {
-      console.log({ cfg })
-      return [
-        {
-          $el: "h2",
-          children: cfg.title,
-        },
-        {
-          $el: "p",
-          children: cfg.description,
-        },
-        {
-          $formkit: cfg.inputType,
-          name: cfg.reference.title,
-          label: cfg.title,
-          validation: cfg.required ? "required" : undefined,
-          options:
-            cfg.inputType == "select"
-              ? cfg.reference.enum
-                ? [
-                    { label: "Please select one", value: undefined, attrs: { disabled: true } },
-                    ...cfg.reference.enum?.map((i) => ({ label: i, value: i })),
-                  ]
-                : undefined
-              : undefined,
-        },
-      ]
-    })
-    ?.flat()
-})
-
-watchOnce(
-  () => props.config,
-  () => {
-    props.config?.column.forEach((i) => {
-      formInput.value[i.reference.title] = referencePlaceholder[i.inputType] ?? undefined
-    })
-  },
-  { immediate: true }
-)
+const getOptions = (cfg: Config["column"][0]) => {
+  if (cfg.inputType == "select" && cfg.reference.enum) {
+    return [
+      { label: "Please select one", value: undefined, attrs: { disabled: true } },
+      ...cfg.reference.enum?.map((i) => ({ label: i, value: i })),
+    ] as FormKitOptionsList
+  } else {
+    return {}
+  }
+}
 
 const clickButton = () => {
   getNode("app-form")?.submit()
@@ -69,7 +36,7 @@ const submitForm = () => {
 </script>
 
 <template>
-  <div class="relative w-full flex flex-col items-center">
+  <div class="relative w-full h-screen overflow-scroll flex flex-col items-center">
     <div class="absolute w-full h-64 inset-0 bg-green-400 z-0"></div>
     <div v-if="config" class="mt-20 w-full max-w-screen-md px-4 md:px-6 z-10">
       <div class="w-full my-12 p-8 md:p-12 bg-white rounded-2xl border">
@@ -81,7 +48,7 @@ const submitForm = () => {
       </div>
 
       <FormKit
-        v-if="!isSuccessful && schema"
+        v-if="!isSuccessful"
         type="form"
         id="app-form"
         v-model="formInput"
@@ -89,7 +56,18 @@ const submitForm = () => {
         formClass="form-schema"
         @submit="submitForm"
       >
-        <FormKitSchema :schema="schema" />
+        <!-- <FormKitSchema :schema="schema" /> -->
+        <template v-for="col in config.column">
+          <h2>{{ col.title }}</h2>
+          <p>{{ col.description }}</p>
+          <FormKit
+            v-model="formInput[col.reference.title]"
+            :type="col.inputType"
+            :name="col.reference.title"
+            :validation="col.required ? 'required' : undefined"
+            :options="getOptions(col)"
+          />
+        </template>
 
         <Button
           @click="clickButton"
