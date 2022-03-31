@@ -84,8 +84,8 @@ fetchData()
       <i-eos-icons-bubble-loading class="text-4xl"></i-eos-icons-bubble-loading>
     </div>
 
-    <Preview v-if="isPreviewing" @close="isPreviewing = false">
+    <Modal class="!h-auto !bg-opacity-100" v-if="isPreviewing" @close="isPreviewing = false">
       <Form :config="config"></Form>
-    </Preview>
+    </Modal>
   </div>
 </template>
